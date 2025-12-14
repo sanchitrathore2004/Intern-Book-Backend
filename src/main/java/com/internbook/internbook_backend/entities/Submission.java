@@ -65,8 +65,8 @@ public class Submission {
     }
 
     public enum Type {
-        intern,
-        placed,
-        intern_to_ppo
+        INTERN,
+        PLACED,
+        INTERN_TO_PPO
     };
 }

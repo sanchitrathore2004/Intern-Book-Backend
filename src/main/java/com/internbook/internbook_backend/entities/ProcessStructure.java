@@ -1,26 +1,30 @@
 package com.internbook.internbook_backend.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @Entity
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "process_structure")
 public class ProcessStructure {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "submission_id")
+    private Integer submissionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "submission_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
     private Submission submission;
 
     @Column(name = "ot_round")
@@ -30,9 +34,13 @@ public class ProcessStructure {
     private Integer piRound;
 
     @Column(name = "start_date")
-    private Instant startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private Instant endDate;
+    private LocalDate endDate;
+
+    public void addSubmission(Submission submission) {
+        this.submission = submission;
+    }
 
 }
