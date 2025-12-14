@@ -1,7 +1,5 @@
-package com.internbook.internbook_backend;
+package com.internbook.internbook_backend.entities;
 
-import com.internbook.internbook_backend.entities.Company;
-import com.internbook.internbook_backend.entities.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,18 +11,18 @@ import lombok.Setter;
 public class Stipend {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "company_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(name = "stipend", nullable = false)
+    @Column(name = "stipend")
     private Integer stipend;
 
 }

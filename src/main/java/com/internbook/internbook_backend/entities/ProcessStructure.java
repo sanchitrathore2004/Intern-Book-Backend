@@ -1,6 +1,5 @@
-package com.internbook.internbook_backend;
+package com.internbook.internbook_backend.entities;
 
-import com.internbook.internbook_backend.entities.Submission;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,24 +15,24 @@ import java.time.Instant;
 public class ProcessStructure {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "submission_id", nullable = false)
+    @JoinColumn(name = "submission_id")
     private Submission submission;
 
-    @Column(name = "ot_round", nullable = false)
+    @Column(name = "ot_round")
     private Integer otRound;
 
-    @Column(name = "pi_round", nullable = false)
+    @Column(name = "pi_round")
     private Integer piRound;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private Instant startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private Instant endDate;
 
 }
