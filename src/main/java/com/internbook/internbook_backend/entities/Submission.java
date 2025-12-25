@@ -4,6 +4,7 @@ import com.internbook.internbook_backend.enums.SubmissionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@DynamicInsert
 @Table(name = "submissions")
 public class Submission {
     @Id
@@ -75,7 +77,7 @@ public class Submission {
     @ManyToMany(mappedBy = "likedSubmissions")
     private Set<User> likedBy = new LinkedHashSet<>();
 
-    @OneToOne(mappedBy = "submissions")
+    @OneToOne(mappedBy = "submissions", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private ProcessStructure processStructure;
 
     @OneToMany(mappedBy = "submission")

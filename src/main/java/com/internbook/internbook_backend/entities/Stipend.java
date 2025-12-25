@@ -25,8 +25,4 @@ public class Stipend {
     @Column(name = "stipend")
     private Integer stipend;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="submission_id")
-    private Submission submission;
-
 }
