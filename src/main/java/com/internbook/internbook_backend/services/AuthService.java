@@ -24,8 +24,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -160,19 +158,5 @@ public class AuthService {
         DepartmentConfig departmentConfig = new DepartmentConfig();
         String departmentName = departmentConfig.getDepartments().get(rollNumber.substring(0, 4));
         return (Department) departmentRepository.findByName(departmentName);
-    }
-
-    // change the https status code
-    public ResponseEntity<Map<String, String>> handleDauthTokenNotRetrieved () {
-        return ResponseEntity.badRequest().body(
-                Map.of("error", "DAuth token can not be retrieved.")
-        );
-    }
-
-    // change the https status code
-    public ResponseEntity<Map<String, String>>  handleDauthUserNotRetrieved () {
-        return ResponseEntity.badRequest().body(
-                Map.of("error", "DAuth user can not be retrieved.")
-        );
     }
 }

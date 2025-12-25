@@ -25,7 +25,4 @@ public class DauthUserApiResponseDto {
 
     @JsonProperty("batch")
     private String batch;
-
-    @JsonProperty("department")
-    private String department;
 }
