@@ -2,13 +2,10 @@ package com.internbook.internbook_backend.entities;
 
 import com.internbook.internbook_backend.enums.SubmissionType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -81,7 +78,7 @@ public class Submission {
     @OneToOne(mappedBy = "submissions")
     private ProcessStructure processStructure;
 
-    @OneToMany(mappedBy = "submissions")
+    @OneToMany(mappedBy = "submission")
     private Set<Report> reports = new LinkedHashSet<>();
 
 }

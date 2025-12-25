@@ -2,13 +2,9 @@ package com.internbook.internbook_backend.entities;
 
 import com.internbook.internbook_backend.enums.Degree;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -45,10 +41,20 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<CtcValue> ctcValues = new LinkedHashSet<>();
 
-    @ManyToMany(mappedBy = "favouriteBy")
+    @ManyToMany
+    @JoinTable(
+            name = "favourites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "submission_id")
+    )
     private Set<Submission> favouriteSubmissions = new LinkedHashSet<>();
 
-    @ManyToMany(mappedBy = "likedBy")
+    @ManyToMany
+    @JoinTable(
+            name = "likes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "submission_id")
+    )
     private Set<Submission> likedSubmissions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
