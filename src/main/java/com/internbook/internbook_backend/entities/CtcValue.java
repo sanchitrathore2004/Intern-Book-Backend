@@ -31,4 +31,8 @@ public class CtcValue {
     @Column(name = "base_pay")
     private BigDecimal basePay;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="submission_id")
+    private Submission submission;
+
 }
