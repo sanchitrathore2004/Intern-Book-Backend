@@ -7,7 +7,9 @@ import com.internbook.internbook_backend.entities.*;
 import com.internbook.internbook_backend.mappers.ProcessStructureMapper;
 import com.internbook.internbook_backend.mappers.SubmissionMapper;
 import com.internbook.internbook_backend.repositories.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,14 +19,16 @@ public class SubmissionService {
     private final ProcessStructureMapper processStructureMapper;
     private final CompanyRepository companyRepository;
     private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
     private final SubmissionRepository submissionRepository;
-    private final StipendRepository stipendRepository;
-    private final CtcValueRepository ctcValueRepository;
+    private final AuthService authService;
 
 
-    public String saveSubmission(SaveSubmissionDto request, Long userId) {
-        var user = userRepository.getReferenceById(userId);
+    @Transactional
+    public String saveSubmission(SaveSubmissionDto request) {
+        var user = authService.getCurrentUser();
+        if(user == null)
+            throw new UsernameNotFoundException("Username not found");
+
         var role = roleRepository.getReferenceById(request.getRoleId());
         var company = companyRepository.getReferenceById(request.getCompanyId());
 
@@ -33,18 +37,18 @@ public class SubmissionService {
         submission.setRole(role);
         submission.setCompany(company);
 
-        if(request.getStipend() != null) {
-            var stipend = new Stipend(user, company, request.getStipend());
-
-            stipendRepository.save(stipend);
+        if(request.getStipendValue() != null) {
+            var stipend = new Stipend(user, company, request.getStipendValue(), submission);
+            System.out.println(stipend.getStipend());
+            submission.setStipend(stipend);
         }
 
         if(request.getCtc() != null) {
-            var ctcValue = new CtcValue(user, company, request.getCtc());
+            var ctcValue = new CtcValue(user, company, request.getCtc(), submission);
             if(request.getBasePay() != null)
                 ctcValue.setBasePay(request.getBasePay());
 
-            ctcValueRepository.save(ctcValue);
+            submission.setCtcValue(ctcValue);
         }
 
         if(!(
@@ -56,6 +60,7 @@ public class SubmissionService {
             var processStructureData = processStructureMapper.toDto(request);
             var processStructure = new ProcessStructure(processStructureData);
             processStructure.setSubmissions(submission);
+
             submission.setProcessStructure(processStructure);
         }
 

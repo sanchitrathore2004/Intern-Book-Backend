@@ -2,7 +2,6 @@ package com.internbook.internbook_backend.services;
 
 import com.internbook.internbook_backend.config.JwtConfig;
 import com.internbook.internbook_backend.dtos.UserDto;
-import com.internbook.internbook_backend.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -53,7 +52,7 @@ public class JwtService {
                 .getPayload();
     }
 
-    public Integer getIdFromToken (String token) {
-        return Integer.valueOf(getClaims(token).getSubject());
+    public Long getIdFromToken (String token) {
+        return Long.valueOf(getClaims(token).getSubject());
     }
 }

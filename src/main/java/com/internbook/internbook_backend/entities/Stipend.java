@@ -2,11 +2,15 @@ package com.internbook.internbook_backend.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "stipends")
 public class Stipend {
     @Id
@@ -23,6 +27,16 @@ public class Stipend {
     private Company company;
 
     @Column(name = "stipend")
-    private Integer stipend;
+    private BigDecimal stipend;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="submission_id")
+    private Submission submission;
+
+    public Stipend(User user, Company company, BigDecimal stipend, Submission submission) {
+        this.user = user;
+        this.company = company;
+        this.stipend = stipend;
+        this.submission = submission;
+    }
 }

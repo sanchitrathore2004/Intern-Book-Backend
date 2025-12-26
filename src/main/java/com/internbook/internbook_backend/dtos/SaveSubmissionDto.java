@@ -52,7 +52,7 @@ public class SaveSubmissionDto {
 
 //    stipends table values
     @DecimalMin(value = "0.0", message = "Stipend cannot be negative")
-    private BigDecimal stipend;
+    private BigDecimal stipendValue;
 
 //    process_structure table values
     @Positive(message = "Ot-rounds cannot be negative")

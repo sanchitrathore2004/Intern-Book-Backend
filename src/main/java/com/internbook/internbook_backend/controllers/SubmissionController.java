@@ -19,45 +19,32 @@ import java.util.Map;
 @AllArgsConstructor
 @RequestMapping("/submission")
 public class SubmissionController {
-    private final UserRepository userRepository;
     private final SubmissionService submissionService;
 
-    @PostMapping("/{user_id}")
-    @Transactional
+    @PostMapping
     public ResponseEntity<?> saveSubmission(
-            @Valid @RequestBody SaveSubmissionDto request,
-            @PathVariable("user_id") Long userId
+            @Valid @RequestBody SaveSubmissionDto request
             ) {
-        var response = submissionService.saveSubmission(request, userId);
+        var response = submissionService.saveSubmission(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Map.of("message", response));
     }
 
-    @PostMapping("/company/{user_id}")
+    @PostMapping("/company")
     public ResponseEntity<?> saveCompany(
-            @Valid @RequestBody SaveCompanyRequestDto request,
-            @PathVariable("user_id") Long userId
+            @Valid @RequestBody SaveCompanyRequestDto request
     ) {
-        var user = userRepository.findById(userId).orElse(null);
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-
         var response = submissionService.saveCompany(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Map.of("message", response));
     }
 
-    @PostMapping("/role/{user_id}")
+    @PostMapping("/role")
     public ResponseEntity<?> saveRole(
-            @Valid @RequestBody SaveRoleRequestDto request,
-            @PathVariable("user_id") Long userId
+            @Valid @RequestBody SaveRoleRequestDto request
     ) {
-        var user = userRepository.findById(userId).orElse(null);
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-
         var response =  submissionService.saveRole(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
