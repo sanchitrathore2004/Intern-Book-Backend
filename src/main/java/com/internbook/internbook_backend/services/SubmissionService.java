@@ -106,6 +106,7 @@ public class SubmissionService {
 
         dto.setCompany(companyResponseMapper.toDto(sub.getCompany()));
         dto.setRole(roleMapper.toDto(sub.getRole()));
+        dto.setProcessStructure(processStructureMapper.toDto(sub.getProcessStructure()));
         return dto;
     }
 }
