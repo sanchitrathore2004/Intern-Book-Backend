@@ -1,12 +1,9 @@
 package com.internbook.internbook_backend.controllers;
 
 import com.internbook.internbook_backend.dtos.SaveRoleRequestDto;
-import com.internbook.internbook_backend.dtos.SaveSubmissionDto;
+import com.internbook.internbook_backend.dtos.SaveSubmissionRequestDto;
 import com.internbook.internbook_backend.dtos.SaveCompanyRequestDto;
-import com.internbook.internbook_backend.entities.*;
-import com.internbook.internbook_backend.repositories.*;
 import com.internbook.internbook_backend.services.SubmissionService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +20,7 @@ public class SubmissionController {
 
     @PostMapping
     public ResponseEntity<?> saveSubmission(
-            @Valid @RequestBody SaveSubmissionDto request
+            @Valid @RequestBody SaveSubmissionRequestDto request
             ) {
         var response = submissionService.saveSubmission(request);
 

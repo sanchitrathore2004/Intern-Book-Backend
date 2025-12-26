@@ -33,6 +33,7 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/auth/**"
                                 ).permitAll()
+                                .requestMatchers("/populate/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
