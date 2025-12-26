@@ -17,14 +17,17 @@ import com.internbook.internbook_backend.repositories.DepartmentRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
@@ -45,14 +48,6 @@ public class AuthService {
 
     @Value("${spring.dauth.endpoint}")
     private String dauthUserEndpoint;
-
-    public AuthService(UserRepository userRepository, DepartmentRepository departmentRepository, UserMapper userMapper, JwtService jwtService, JwtConfig jwtConfig) {
-        this.userRepository = userRepository;
-        this.departmentRepository = departmentRepository;
-        this.userMapper = userMapper;
-        this.jwtService = jwtService;
-        this.jwtConfig = jwtConfig;
-    }
 
     public ResponseEntity<JwtResponseDto> dauthLogin (String authorizationCode,
                                                       HttpServletResponse response) {
@@ -158,5 +153,12 @@ public class AuthService {
         DepartmentConfig departmentConfig = new DepartmentConfig();
         String departmentName = departmentConfig.getDepartments().get(rollNumber.substring(0, 4));
         return (Department) departmentRepository.findByName(departmentName);
+    }
+
+    public User getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = (Long) authentication.getPrincipal();
+
+        return userRepository.findById(userId).orElse(null);
     }
 }

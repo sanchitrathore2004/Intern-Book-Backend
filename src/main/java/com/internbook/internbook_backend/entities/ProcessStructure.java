@@ -1,7 +1,10 @@
 package com.internbook.internbook_backend.entities;
 
+import com.internbook.internbook_backend.dtos.ProcessStructureRequestDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -9,6 +12,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "process_structure")
 public class ProcessStructure {
     @Id
@@ -32,4 +37,10 @@ public class ProcessStructure {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    public ProcessStructure(ProcessStructureRequestDto data) {
+        this.setPiRound(data.getPiRounds());
+        this.setOtRound(data.getOtRounds());
+        this.setStartDate(data.getStartDate());
+        this.setEndDate(data.getEndDate());
+    }
 }
