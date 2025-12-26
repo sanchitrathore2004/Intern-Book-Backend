@@ -3,10 +3,7 @@ package com.internbook.internbook_backend.services;
 import com.internbook.internbook_backend.config.DepartmentConfig;
 import com.internbook.internbook_backend.config.JwtConfig;
 import com.internbook.internbook_backend.config.YearConfig;
-import com.internbook.internbook_backend.dtos.DauthTokenResponseDto;
-import com.internbook.internbook_backend.dtos.DauthUserApiResponseDto;
-import com.internbook.internbook_backend.dtos.JwtResponseDto;
-import com.internbook.internbook_backend.dtos.UserDto;
+import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.Department;
 import com.internbook.internbook_backend.entities.User;
 import com.internbook.internbook_backend.enums.Degree;
@@ -70,6 +67,16 @@ public class AuthService {
         var jwtRefreshToken = jwtService.generateRefreshToken(userDto);
         createCookieForRefreshToken(response, jwtRefreshToken);
         return ResponseEntity.ok(new JwtResponseDto(jwtAccessToken, userDto));
+    }
+
+    public ResponseEntity<RefreshTokenResponseDto> refresh (String refreshToken) {
+        if(!jwtService.validateToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        var userId = jwtService.getIdFromToken(refreshToken);
+        var user = userRepository.findById(userId).orElseThrow();
+        var accessToken = jwtService.generateAccessToken(userMapper.toDto(user));
+        return ResponseEntity.ok(new RefreshTokenResponseDto(accessToken));
     }
 
     private void createCookieForRefreshToken(HttpServletResponse response, String jwtRefreshToken) {

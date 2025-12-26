@@ -28,6 +28,12 @@ public class AuthController {
         return authService.dauthLogin(request.getAuthorizationCode(), response);
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponseDto> refresh (@CookieValue(value = "refreshToken") String refreshToken)
+    {
+        return  authService.refresh(refreshToken);
+    }
+
     @ExceptionHandler(DauthTokenNotRetrievedException.class)
     public ResponseEntity<Map<String, String>> handleDauthTokenNotRetrieved () {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
