@@ -81,4 +81,10 @@ public class Submission {
     @OneToMany(mappedBy = "submission")
     private Set<Report> reports = new LinkedHashSet<>();
 
+    @OneToOne (mappedBy = "submission")
+    private Stipend stipend;
+
+    @OneToOne (mappedBy = "submission")
+    private CtcValue ctcValue;
+
 }
