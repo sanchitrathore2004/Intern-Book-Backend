@@ -8,5 +8,6 @@ public class InternBookBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(InternBookBackendApplication.class, args);
+        System.out.println("This mf is working");
     }
 }
