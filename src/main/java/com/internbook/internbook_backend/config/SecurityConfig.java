@@ -33,8 +33,7 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/auth/**"
                                 ).permitAll()
-                                .requestMatchers("/populate/departments").permitAll()
-                                .requestMatchers("/populate/users").permitAll()
+                                .requestMatchers("/populate/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

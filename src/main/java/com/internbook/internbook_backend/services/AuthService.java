@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -46,14 +45,6 @@ public class AuthService {
 
     @Value("${spring.dauth.endpoint}")
     private String dauthUserEndpoint;
-
-//    public AuthService(UserRepository userRepository, DepartmentRepository departmentRepository, UserMapper userMapper, JwtService jwtService, JwtConfig jwtConfig) {
-//        this.userRepository = userRepository;
-//        this.departmentRepository = departmentRepository;
-//        this.userMapper = userMapper;
-//        this.jwtService = jwtService;
-//        this.jwtConfig = jwtConfig;
-//    }
 
     public ResponseEntity<JwtResponseDto> dauthLogin (String authorizationCode,
                                                       HttpServletResponse response) {

@@ -1,11 +1,8 @@
 package com.internbook.internbook_backend.services;
 
-import com.internbook.internbook_backend.dtos.SaveCompanyRequestDto;
-import com.internbook.internbook_backend.dtos.SaveRoleRequestDto;
-import com.internbook.internbook_backend.dtos.SaveSubmissionDto;
+import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.*;
-import com.internbook.internbook_backend.mappers.ProcessStructureMapper;
-import com.internbook.internbook_backend.mappers.SubmissionMapper;
+import com.internbook.internbook_backend.mappers.*;
 import com.internbook.internbook_backend.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -25,9 +22,11 @@ public class SubmissionService {
     private final CTCMapper cTCMapper;
     private final RoleMapper roleMapper;
     private final CompanyResponseMapper companyResponseMapper;
+    private final DepartmentRepository departmentRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public String saveSubmission(SaveSubmissionDto request) {
+    public String saveSubmission(SaveSubmissionRequestDto request) {
         var user = authService.getCurrentUser();
         if (user == null)
             throw new UsernameNotFoundException("Username not found");
