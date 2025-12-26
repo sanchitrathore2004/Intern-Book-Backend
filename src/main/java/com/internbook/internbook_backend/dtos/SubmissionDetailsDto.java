@@ -18,6 +18,7 @@ public class SubmissionDetailsDto {
    private RoleResponseDto role;
    private SubmissionType type;
    private CTCResponseDto ctc;
+   private ProcessStructureResponseDto processStructure;
 
     private BigDecimal stipend;
     private String benefits;
