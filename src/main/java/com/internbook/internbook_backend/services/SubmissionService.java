@@ -1,8 +1,11 @@
 package com.internbook.internbook_backend.services;
 
-import com.internbook.internbook_backend.dtos.*;
+import com.internbook.internbook_backend.dtos.SaveCompanyRequestDto;
+import com.internbook.internbook_backend.dtos.SaveRoleRequestDto;
+import com.internbook.internbook_backend.dtos.SaveSubmissionDto;
 import com.internbook.internbook_backend.entities.*;
-import com.internbook.internbook_backend.mappers.*;
+import com.internbook.internbook_backend.mappers.ProcessStructureMapper;
+import com.internbook.internbook_backend.mappers.SubmissionMapper;
 import com.internbook.internbook_backend.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -57,6 +60,7 @@ public class SubmissionService {
             var processStructureData = processStructureMapper.toDto(request);
             var processStructure = new ProcessStructure(processStructureData);
             processStructure.setSubmissions(submission);
+
             submission.setProcessStructure(processStructure);
         }
 
@@ -67,7 +71,7 @@ public class SubmissionService {
     public String saveCompany(SaveCompanyRequestDto request) {
         var company = new Company();
         company.setName(request.getCompanyName());
-        if (request.getLogoUrl() != null)
+        if(request.getLogoUrl() != null)
             company.setLogoUrl(request.getLogoUrl());
 
         companyRepository.save(company);
@@ -77,7 +81,7 @@ public class SubmissionService {
     public String saveRole(SaveRoleRequestDto request) {
         var role = new Role();
         role.setName(request.getRoleName());
-        if (request.getDescription() != null)
+        if(request.getDescription() != null)
             role.setDescription(request.getDescription());
 
         roleRepository.save(role);
@@ -108,5 +112,67 @@ public class SubmissionService {
         dto.setRole(roleMapper.toDto(sub.getRole()));
         dto.setProcessStructure(processStructureMapper.toDto(sub.getProcessStructure()));
         return dto;
+    }
+
+    //  BULK UPLOAD ROUTES - DELETE BEFORE PUSHING TO PROD
+    public void saveDepartment(SaveDepartmentRequestDto request) {
+        var department = new Department();
+        department.setName(request.getDepartName());
+
+        departmentRepository.save(department);
+    }
+
+    public void saveUsers(SaveUserRequestDto request) {
+        var user = new User();
+        user.setId(request.getRollNo());
+        user.setName(request.getName());
+        user.setDegree(request.getDegree());
+        user.setEmail(request.getEmail());
+        var department = departmentRepository.findById(request.getDepartment_id()).orElse(null);
+        if(department == null)
+            throw new UsernameNotFoundException("Department not found");
+        user.setDepartment(department);
+        user.setYear(request.getYear());
+
+        userRepository.save(user);
+    }
+
+    public void saveSubmissions(SaveSubmissionsRequestDto request) {
+        var user = userRepository.findById(request.getUserId()).orElse(null);
+        var role = roleRepository.getReferenceById(request.getRoleId());
+        var company = companyRepository.getReferenceById(request.getCompanyId());
+
+        var submission = submissionMapper.toEntity(request);
+        submission.setUser(user);
+        submission.setRole(role);
+        submission.setCompany(company);
+
+        if(request.getStipendValue() != null) {
+            var stipend = new Stipend(user, company, request.getStipendValue(), submission);
+            submission.setStipend(stipend);
+        }
+
+        if(request.getCtc() != null) {
+            var ctcValue = new CtcValue(user, company, request.getCtc(), submission);
+            if(request.getBasePay() != null)
+                ctcValue.setBasePay(request.getBasePay());
+
+            submission.setCtcValue(ctcValue);
+        }
+
+        if(!(
+                request.getPiRounds() == null ||
+                        request.getOtRounds() == null ||
+                        request.getStartDate() == null ||
+                        request.getEndDate() == null
+        )) {
+            var processStructureData = processStructureMapper.toDto(request);
+            var processStructure = new ProcessStructure(processStructureData);
+            processStructure.setSubmissions(submission);
+
+            submission.setProcessStructure(processStructure);
+        }
+
+        submissionRepository.save(submission);
     }
 }

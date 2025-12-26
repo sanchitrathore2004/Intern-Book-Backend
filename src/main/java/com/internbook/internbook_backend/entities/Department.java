@@ -20,7 +20,7 @@ public class Department {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<User> users = new LinkedHashSet<>();
 
 }

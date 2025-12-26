@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class SaveSubmissionDto {
+public class SaveSubmissionRequestDto {
     @Positive
     private Integer id;
 
