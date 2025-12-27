@@ -16,4 +16,5 @@ public class UserDto {
     private Degree degree;
     private UserRole userRole;
     private boolean isAnonymous;
+    private String profileUrl;
 }

@@ -1,6 +1,9 @@
 package com.internbook.internbook_backend.controllers;
 
 import com.internbook.internbook_backend.dtos.*;
+import com.internbook.internbook_backend.dtos.temporary.SaveDepartmentRequestDto;
+import com.internbook.internbook_backend.dtos.temporary.SaveSubmissionsRequestDto;
+import com.internbook.internbook_backend.dtos.temporary.SaveUserRequestDto;
 import com.internbook.internbook_backend.services.SubmissionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

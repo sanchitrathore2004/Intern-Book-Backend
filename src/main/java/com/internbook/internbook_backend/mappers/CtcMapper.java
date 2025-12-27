@@ -5,6 +5,6 @@ import com.internbook.internbook_backend.entities.CtcValue;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface CTCMapper {
+public interface CtcMapper {
     CTCResponseDto toDto(CtcValue ctcValue);
 }

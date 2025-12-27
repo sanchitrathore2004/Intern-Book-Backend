@@ -1,4 +1,4 @@
-package com.internbook.internbook_backend.dtos;
+package com.internbook.internbook_backend.dtos.temporary;
 
 import lombok.Data;
 
