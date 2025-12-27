@@ -1,4 +1,4 @@
-package com.internbook.internbook_backend.dtos;
+package com.internbook.internbook_backend.dtos.temporary;
 
 import com.internbook.internbook_backend.enums.SubmissionType;
 import lombok.Data;

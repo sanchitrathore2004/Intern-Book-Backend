@@ -1,7 +1,11 @@
 package com.internbook.internbook_backend.services;
 
 import com.internbook.internbook_backend.dtos.*;
+import com.internbook.internbook_backend.dtos.temporary.SaveDepartmentRequestDto;
+import com.internbook.internbook_backend.dtos.temporary.SaveSubmissionsRequestDto;
+import com.internbook.internbook_backend.dtos.temporary.SaveUserRequestDto;
 import com.internbook.internbook_backend.entities.*;
+import com.internbook.internbook_backend.enums.SubmissionType;
 import com.internbook.internbook_backend.mappers.*;
 import com.internbook.internbook_backend.repositories.*;
 import jakarta.transaction.Transactional;
@@ -19,7 +23,7 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final AuthService authService;
 
-    private final CTCMapper cTCMapper;
+    private final CtcMapper ctcMapper;
     private final RoleMapper roleMapper;
     private final CompanyResponseMapper companyResponseMapper;
     private final DepartmentRepository departmentRepository;
@@ -87,8 +91,8 @@ public class SubmissionService {
         return "Role saved successfully!";
     }
 
-    public SubmissionDetailsDto toSubmissionDetailsDto(Submission sub) {
-        var dto = new SubmissionDetailsDto();
+    public SubmissionResponseDto toSubmissionDetailsDto(Submission sub) {
+        var dto = new SubmissionResponseDto();
         dto.setId(sub.getId());
         dto.setCgpa(sub.getCgpa());
         dto.setBenefits(sub.getBenefits());
@@ -98,12 +102,18 @@ public class SubmissionService {
         dto.setCreatedAt(sub.getCreatedAt());
         dto.setType(sub.getType());
         dto.setResources(sub.getResources());
+        dto.setIsFraud(sub.getIsFraud());
+        dto.setIsOffensive(sub.getIsOffensive());
+        dto.setLikeCount(sub.getLikeCount());
 
-        if (sub.getCtcValue() != null) {
-            dto.setCtc(cTCMapper.toDto(sub.getCtcValue()));
+        if ((sub.getType() == SubmissionType.PLACED ||
+                sub.getType() == SubmissionType.INTERN_TO_PPO) &&
+                sub.getCtcValue() != null) {
+            dto.setCtc(ctcMapper.toDto(sub.getCtcValue()));
         }
 
-        if (sub.getStipend() != null) {
+        if (sub.getType() == SubmissionType.INTERN &&
+                sub.getStipend() != null) {
             dto.setStipend(sub.getStipend().getStipend());
         }
 

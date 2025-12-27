@@ -4,3 +4,6 @@ alter table submissions
 
 alter table stipends
     modify stipend decimal(10, 2) not null;
+
+alter table users
+    add profile_url varchar(1024) default 'https://robohash.org/Phunsi%20Kumar';

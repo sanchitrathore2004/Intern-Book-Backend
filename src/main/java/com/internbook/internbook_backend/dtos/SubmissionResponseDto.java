@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubmissionDetailsDto {
+public class SubmissionResponseDto {
    private Integer id;
 
    private CompanyResponseDto company;
@@ -28,5 +28,9 @@ public class SubmissionDetailsDto {
     private BigDecimal cgpa;
     private String clubPositions;
     private LocalDateTime createdAt;
+
+    private Boolean isFraud;
+    private Boolean isOffensive;
+    private Integer likeCount;
 
 }

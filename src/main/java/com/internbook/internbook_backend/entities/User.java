@@ -36,13 +36,16 @@ public class User {
     @Column(name = "year")
     private Integer year;
 
+    @Column(name = "profile_url", insertable = false)
+    private String profileUrl;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user")
     private Set<CtcValue> ctcValues = new LinkedHashSet<>();
 
-    @Column(name = "user_role")
+    @Column(name = "user_role", insertable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 

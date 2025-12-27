@@ -1,14 +1,11 @@
 package com.internbook.internbook_backend.controllers;
 
-
 import com.internbook.internbook_backend.dtos.*;
-import com.internbook.internbook_backend.entities.Submission;
-import com.internbook.internbook_backend.entities.User;
-import com.internbook.internbook_backend.mappers.UserMapper;
-import com.internbook.internbook_backend.repositories.SubmissionRepository;
-import com.internbook.internbook_backend.repositories.UserRepository;
 import com.internbook.internbook_backend.services.AuthService;
-import com.internbook.internbook_backend.services.SubmissionService;
+import com.internbook.internbook_backend.services.UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,51 +16,44 @@ import java.util.List;
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
-    private final UserRepository userRepository;
-    private final SubmissionRepository submissionRepository;
-    private final SubmissionService submissionService;
     private final AuthService authService;
-    private final UserMapper userMapper;
-
-    @GetMapping
-    private ResponseEntity<?> test(){
-        var user = authService.getCurrentUser();
-        return ResponseEntity.ok(userMapper.toDto(user));
-    }
-
+    private final UserService userService;
 
     @GetMapping("/favourites")
-    public ResponseEntity<List<SubmissionDetailsDto>> getFavouritesByUserId() {
-        User user = authService.getCurrentUser();
-        Long userId = user.getId();
-        List<Submission> favouriteSubmissions = submissionRepository.findByUserId(userId);
-        List<SubmissionDetailsDto> response = favouriteSubmissions.stream()
-                .map(submissionService::toSubmissionDetailsDto)
-                .toList();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<SubmissionResponseDto>> getFavouritesByUserId() {
+        return ResponseEntity.ok(userService.getFavouriteSubmissions());
     }
 
-
-    @PostMapping("/addToFavourites")
+    @PostMapping("/addToFavourites/{submission_id}")
     private ResponseEntity<?> addToFavourites(
-            @RequestBody SubmissionRequestDto request
+            @NotNull(message = "Submission Id should not be null")
+            @PathVariable(name = "submission_id")
+            Integer submissionId
     ){
-        var user = authService.getCurrentUser();
-        Submission submission = submissionRepository.getReferenceById(request.getSubmissionId());
-        user.getFavouriteSubmissions().add(submission);
-        userRepository.save(user);
+        userService.addToFavourite(submissionId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/removeFromFavourites")
+    @DeleteMapping("/removeFromFavourites/{submission_id}")
     private ResponseEntity<?> removeFromFavourites(
-            @RequestBody SubmissionRequestDto request
+            @NotNull(message = "Submission Id should not be null")
+            @PathVariable(name = "submission_id")
+            Integer submissionId
     ){
-        User user = authService.getCurrentUser();
-        Submission submission = submissionRepository.getReferenceById(request.getSubmissionId());
-        user.getFavouriteSubmissions().remove(submission);
-        userRepository.save(user);
+        userService.deleteFromFavourite(submissionId);
         return  ResponseEntity.ok().build();
     }
 
+    @GetMapping("/profile")
+    private ResponseEntity<UserProfileResponseDto> getUserProfile() {
+        return ResponseEntity.ok(userService.getUserProfile());
+    }
+
+    @PutMapping("/updateProfile")
+    private ResponseEntity<JwtResponseDto> updateUserProfile(
+            @Valid @RequestBody UpdateProfileRequestDto request,
+            HttpServletResponse response
+    ) {
+        return authService.updateProfile(userService.updateProfile(request), response);
+    }
 }

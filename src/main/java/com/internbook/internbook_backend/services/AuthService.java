@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -73,15 +74,6 @@ public class AuthService {
         var user = userRepository.findById(userId).orElseThrow();
         var accessToken = jwtService.generateAccessToken(userMapper.toDto(user));
         return ResponseEntity.ok(new RefreshTokenResponseDto(accessToken));
-    }
-
-    private void createCookieForRefreshToken(HttpServletResponse response, String jwtRefreshToken) {
-        var cookie = new Cookie("refreshToken", jwtRefreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/auth");
-        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
-        cookie.setSecure(true);
-        response.addCookie(cookie);
     }
 
     private DauthTokenResponseDto getDauthToken (String code) {
@@ -165,13 +157,31 @@ public class AuthService {
         return (Department) departmentRepository.findByName(departmentName);
     }
 
+    private void createCookieForRefreshToken(HttpServletResponse response, String jwtRefreshToken) {
+        var cookie = new Cookie("refreshToken", jwtRefreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/auth");
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+    }
 
     public User getCurrentUser() {
         var authentication =
                 SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         Long userId = ((Number) principal).longValue();
-        return userRepository.findById(userId).orElse(null);
+        var user = userRepository.findOneById(userId).orElse(null);
+        if(user == null)
+            throw new UsernameNotFoundException("user not found");
+        return user;
     }
 
+    public ResponseEntity<JwtResponseDto> updateProfile(User user, HttpServletResponse response) {
+        var userDto = userMapper.toDto(user);
+        var jwtAccessToken = jwtService.generateAccessToken(userDto);
+        var jwtRefreshToken = jwtService.generateRefreshToken(userDto);
+        createCookieForRefreshToken(response, jwtRefreshToken);
+        return ResponseEntity.ok(new JwtResponseDto(jwtAccessToken, userDto));
+    }
 }
