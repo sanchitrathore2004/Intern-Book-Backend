@@ -1,6 +1,7 @@
 package com.internbook.internbook_backend.entities;
 
 import com.internbook.internbook_backend.enums.Degree;
+import com.internbook.internbook_backend.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +41,13 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<CtcValue> ctcValues = new LinkedHashSet<>();
+
+    @Column(name = "user_role")
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
+    @Column(name = "is_anonymous")
+    private boolean isAnonymous;
 
     @ManyToMany
     @JoinTable(

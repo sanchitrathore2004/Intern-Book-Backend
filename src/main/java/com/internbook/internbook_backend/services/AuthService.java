@@ -7,6 +7,7 @@ import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.Department;
 import com.internbook.internbook_backend.entities.User;
 import com.internbook.internbook_backend.enums.Degree;
+import com.internbook.internbook_backend.enums.UserRole;
 import com.internbook.internbook_backend.exceptions.DauthTokenNotRetrievedException;
 import com.internbook.internbook_backend.exceptions.DauthUserNotRetrievedException;
 import com.internbook.internbook_backend.mappers.UserMapper;
@@ -134,6 +135,8 @@ public class AuthService {
         user.setDegree(getDegreeFromBatch(dauthUserApiResponseDto.getBatch()));
         user.setYear(getYearFromBatch(dauthUserApiResponseDto.getBatch()));
         user.setDepartment(getDepartmentByEmail(dauthUserApiResponseDto.getEmail()));
+        user.setUserRole(UserRole.USER);
+        user.setAnonymous(false);
         return user;
     }
 
