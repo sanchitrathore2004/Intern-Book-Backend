@@ -83,10 +83,10 @@ public class Submission {
     @OneToMany(mappedBy = "submission")
     private Set<Report> reports = new LinkedHashSet<>();
 
-    @OneToOne (mappedBy = "submission", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToOne (mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
     private Stipend stipend;
 
-    @OneToOne (mappedBy = "submission", cascade =  CascadeType.PERSIST, orphanRemoval = true)
+    @OneToOne (mappedBy = "submission", cascade =  CascadeType.ALL, orphanRemoval = true)
     private CtcValue ctcValue;
 
 }
