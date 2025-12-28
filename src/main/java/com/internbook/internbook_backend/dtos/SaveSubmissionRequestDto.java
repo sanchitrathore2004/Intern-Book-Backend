@@ -9,8 +9,8 @@ import java.time.LocalDate;
 
 @Data
 public class SaveSubmissionRequestDto {
-    @Positive
-    private Integer id;
+//    @Positive
+//    private Integer id;
 
     @NotNull(message = "Company ID is required")
     @Positive

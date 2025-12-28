@@ -5,6 +5,7 @@ import com.internbook.internbook_backend.dtos.SaveSubmissionRequestDto;
 import com.internbook.internbook_backend.dtos.SaveCompanyRequestDto;
 import com.internbook.internbook_backend.services.SubmissionService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +47,28 @@ public class SubmissionController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Map.of("message", response));
+    }
+
+    @PatchMapping("/{submission_id}")
+    public ResponseEntity<?> editSubmission(
+            @NotNull(message = "Submission Id should be not null")
+            @PathVariable(name = "submission_id")
+            Integer submissionId,
+            @Valid @RequestBody  SaveSubmissionRequestDto request
+    ){
+        var response = submissionService.updateSubmission(submissionId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                Map.of("message", response)
+        );
+    }
+
+    @DeleteMapping("/{submission_id}")
+    public ResponseEntity<?> deleteSubmission(
+            @NotNull(message = "Submission Id should be not null")
+            @PathVariable(name = "submission_id")
+            Integer submissionId
+    ){
+        submissionService.deleteSubmission(submissionId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

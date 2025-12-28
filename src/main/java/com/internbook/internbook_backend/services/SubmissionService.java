@@ -8,10 +8,14 @@ import com.internbook.internbook_backend.entities.*;
 import com.internbook.internbook_backend.enums.SubmissionType;
 import com.internbook.internbook_backend.mappers.*;
 import com.internbook.internbook_backend.repositories.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +32,8 @@ public class SubmissionService {
     private final CompanyResponseMapper companyResponseMapper;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
+    private final CtcValueRepository ctcValueRepository;
+    private final StipendRepository stipendRepository;
 
     @Transactional
     public String saveSubmission(SaveSubmissionRequestDto request) {
@@ -184,4 +190,88 @@ public class SubmissionService {
 
         submissionRepository.save(submission);
     }
+
+    @Transactional
+    public SubmissionResponseDto updateSubmission(
+            Integer submissionId,
+            SaveSubmissionRequestDto request
+    ) {
+
+        Submission submission = validateUserSubmission(submissionId);
+
+        submission.setBenefits(request.getBenefits());
+        submission.setExperience(request.getExperience());
+        submission.setMistakes(request.getMistakes());
+        submission.setResources(request.getResources());
+        submission.setCgpa(request.getCgpa());
+        submission.setClubPositions(request.getClubPositions());
+        submission.setRole(roleRepository.getReferenceById(request.getRoleId()));
+
+        boolean companyChanged = !Objects.equals(submission.getCompany().getId(), request.getCompanyId());
+        boolean typeChanged = submission.getType() != request.getType();
+
+        if (companyChanged) {
+            Company company = companyRepository.getReferenceById(request.getCompanyId());
+            submission.setCompany(company);
+        }
+
+        if (typeChanged) {
+            submission.setType(request.getType());
+        }
+        applyFinancials(submission, request, submission.getCompany());
+        return toSubmissionDetailsDto(submission);
+    }
+
+    @Transactional
+    public void deleteSubmission(Integer submissionId) {
+        Submission submission = validateUserSubmission(submissionId);
+        submissionRepository.delete(submission);
+    }
+
+    private void applyFinancials(
+            Submission submission,
+            SaveSubmissionRequestDto request,
+            Company company
+    ) {
+        submission.setCtcValue(null);
+        submission.setStipend(null);
+
+        if (request.getCtc() != null && submission.getType()!=SubmissionType.INTERN) {
+            CtcValue ctc = new CtcValue();
+            ctc.setSubmission(submission);
+            ctc.setCompany(company);
+            ctc.setCtc(request.getCtc());
+            ctc.setBasePay(request.getBasePay());
+            ctc.setUser(submission.getUser());
+            ctcValueRepository.save(ctc);
+            submission.setCtcValue(ctc);
+            return;
+        }
+
+        if (request.getStipendValue() != null && submission.getType()!=SubmissionType.PLACED) {
+            Stipend stipend = new Stipend();
+            stipend.setSubmission(submission);
+            stipend.setCompany(company);
+            stipend.setStipend(request.getStipendValue());
+            stipend.setUser(submission.getUser());
+            stipendRepository.save(stipend);
+            submission.setStipend(stipend);
+        }
+    }
+
+    public Submission validateUserSubmission(Integer submissionId) {
+        var user = authService.getCurrentUser();
+
+        Submission submission = submissionRepository.findById(submissionId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Submission not found")
+                );
+
+        if (!submission.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("User not allowed to delete submission");
+        }
+        return submission;
+    }
+
+
 }
