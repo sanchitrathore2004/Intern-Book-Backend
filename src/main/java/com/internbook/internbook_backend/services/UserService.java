@@ -25,7 +25,7 @@ public class UserService {
         var submissions = submissionRepository.findAllByUserId(user.getId());
 
         List<SubmissionResponseDto> mySubmissions =  submissions.stream()
-                .map(submissionService::toSubmissionDetailsDto)
+                .map(submissionService::toSubmissionResponseDto)
                 .toList();
 
         var profileDto = new UserProfileResponseDto(user);
@@ -60,7 +60,7 @@ public class UserService {
         User user = authService.getCurrentUser();
         List<Submission> favouriteSubmissions = submissionRepository.findFavouriteSubmissions(user.getId());
         return favouriteSubmissions.stream()
-                .map(submissionService::toSubmissionDetailsDto)
+                .map(submissionService::toSubmissionResponseDto)
                 .toList();
     }
 }

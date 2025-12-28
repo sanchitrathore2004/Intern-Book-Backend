@@ -89,4 +89,56 @@ public class Submission {
     @OneToOne (mappedBy = "submission", cascade =  CascadeType.ALL, orphanRemoval = true)
     private CtcValue ctcValue;
 
+    public void updateStipend(BigDecimal stipendValue) {
+        if(stipendValue == null){
+            removeStipend();
+        } else {
+            if (stipend == null) {
+                stipend = new Stipend(
+                        user,
+                        company,
+                        stipendValue,
+                        this
+                );
+            } else {
+                stipend.setStipend(stipendValue);
+                stipend.setCompany(company);
+            }
+        }
+    }
+
+    public void updateCtc(BigDecimal ctcValueReq, BigDecimal basePayValue) {
+        if(ctcValueReq== null){
+            removeCtc();
+        } else {
+            if (ctcValue == null) {
+                ctcValue = new CtcValue(
+                        user,
+                        company,
+                        ctcValueReq,
+                        basePayValue,
+                        this
+                );
+            } else {
+                ctcValue.setCtc(ctcValueReq);
+                ctcValue.setBasePay(basePayValue);
+                ctcValue.setCompany(company);
+
+            }
+        }
+    }
+
+    private void removeCtc(){
+        if(ctcValue != null){
+            ctcValue.setSubmission(null);
+        }
+        ctcValue = null;
+    }
+
+    private void removeStipend() {
+        if(stipend != null) {
+            stipend.setSubmission(null);
+        }
+        stipend=null;
+    }
 }

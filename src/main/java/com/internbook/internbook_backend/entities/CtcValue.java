@@ -1,6 +1,7 @@
 package com.internbook.internbook_backend.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "ctc_values")
 public class CtcValue {
     @Id
@@ -42,4 +44,13 @@ public class CtcValue {
         this.ctc = ctc;
         this.submission = submission;
     }
+
+    public CtcValue(User user, Company company, BigDecimal ctcValueReq, BigDecimal basePayValue, Submission submission) {
+        this.user = user;
+        this.company = company;
+        this.ctc = ctcValueReq;
+        this.basePay = basePayValue;
+        this.submission = submission;
+    }
+
 }
