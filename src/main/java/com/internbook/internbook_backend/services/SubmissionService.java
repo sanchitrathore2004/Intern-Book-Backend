@@ -29,14 +29,14 @@ public class SubmissionService {
 
     private final CtcMapper ctcMapper;
     private final RoleMapper roleMapper;
-    private final CompanyResponseMapper companyResponseMapper;
+    private final CompanyMapper companyMapper;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
     private final CtcValueRepository ctcValueRepository;
     private final StipendRepository stipendRepository;
 
     @Transactional
-    public String saveSubmission(SaveSubmissionRequestDto request) {
+    public SubmissionResponseDto saveSubmission(SaveSubmissionRequestDto request) {
         var user = authService.getCurrentUser();
         if (user == null)
             throw new UsernameNotFoundException("Username not found");
@@ -74,30 +74,30 @@ public class SubmissionService {
         }
 
         submissionRepository.save(submission);
-        return "Submission saved successfully";
+        return toSubmissionResponseDto(submission);
     }
 
-    public String saveCompany(SaveCompanyRequestDto request) {
+    public CompanyResponseDto saveCompany(SaveCompanyRequestDto request) {
         var company = new Company();
         company.setName(request.getCompanyName());
         if(request.getLogoUrl() != null)
             company.setLogoUrl(request.getLogoUrl());
 
         companyRepository.save(company);
-        return "Company saved successfully!";
+        return companyMapper.toDto(company);
     }
 
-    public String saveRole(SaveRoleRequestDto request) {
+    public RoleResponseDto saveRole(SaveRoleRequestDto request) {
         var role = new Role();
         role.setName(request.getRoleName());
         if(request.getDescription() != null)
             role.setDescription(request.getDescription());
 
         roleRepository.save(role);
-        return "Role saved successfully!";
+        return roleMapper.toDto(role);
     }
 
-    public SubmissionResponseDto toSubmissionDetailsDto(Submission sub) {
+    public SubmissionResponseDto toSubmissionResponseDto(Submission sub) {
         var dto = new SubmissionResponseDto();
         dto.setId(sub.getId());
         dto.setCgpa(sub.getCgpa());
@@ -123,11 +123,69 @@ public class SubmissionService {
             dto.setStipend(sub.getStipend().getStipend());
         }
 
-        dto.setCompany(companyResponseMapper.toDto(sub.getCompany()));
+        dto.setCompany(companyMapper.toDto(sub.getCompany()));
         dto.setRole(roleMapper.toDto(sub.getRole()));
         dto.setProcessStructure(processStructureMapper.toDto(sub.getProcessStructure()));
         return dto;
     }
+
+    @Transactional
+    public SubmissionResponseDto updateSubmission(
+            Integer submissionId,
+            SaveSubmissionRequestDto request
+    ) {
+
+        Submission submission = validateUserSubmission(submissionId);
+
+        submission.setBenefits(request.getBenefits());
+        submission.setExperience(request.getExperience());
+        submission.setMistakes(request.getMistakes());
+        submission.setResources(request.getResources());
+        submission.setCgpa(request.getCgpa());
+        submission.setClubPositions(request.getClubPositions());
+        submission.setRole(roleRepository.getReferenceById(request.getRoleId()));
+
+        boolean companyChanged = !Objects.equals(submission.getCompany().getId(), request.getCompanyId());
+        boolean typeChanged = submission.getType() != request.getType();
+
+
+        if (companyChanged || typeChanged) {
+            if(companyChanged){
+                Company company = companyRepository.getReferenceById(request.getCompanyId());
+                submission.setCompany(company);
+            }
+            if (typeChanged) {
+                submission.setType(request.getType());
+            }
+        }
+        submission.updateStipend(request.getStipendValue());
+        submission.updateCtc(request.getCtc(), request.getBasePay());
+
+        submissionRepository.save(submission);
+        return toSubmissionResponseDto(submission);
+    }
+
+
+    public void deleteSubmission(Integer submissionId) {
+        Submission submission = validateUserSubmission(submissionId);
+        submissionRepository.delete(submission);
+    }
+
+    public Submission validateUserSubmission(Integer submissionId) {
+        var user = authService.getCurrentUser();
+
+        Submission submission = submissionRepository.findById(submissionId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Submission not found")
+                );
+
+        if (!submission.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("User not allowed to delete submission");
+        }
+        return submission;
+    }
+
+
 
     //  BULK UPLOAD ROUTES - DELETE BEFORE PUSHING TO PROD
     public void saveDepartment(SaveDepartmentRequestDto request) {
