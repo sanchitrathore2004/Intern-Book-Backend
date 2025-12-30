@@ -1,0 +1,7 @@
+{
+  "name": "intern-book-backend-tools",
+  "private": true,
+  "scripts": {
+    "openapi:yaml": "npx @openapitools/openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g openapi-yaml -o ."
+  }
+}
