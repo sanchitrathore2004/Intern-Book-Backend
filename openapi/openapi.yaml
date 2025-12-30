@@ -1,0 +1,866 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- description: Generated server url
+  url: http://localhost:8080
+paths:
+  /user/updateProfile:
+    put:
+      operationId: updateUserProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequestDto"
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JwtResponseDto"
+          description: OK
+      tags:
+      - user-controller
+  /submission/{submission_id}:
+    delete:
+      operationId: deleteSubmission
+      parameters:
+      - explode: false
+        in: path
+        name: submission_id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      tags:
+      - submission-controller
+    put:
+      operationId: editSubmission
+      parameters:
+      - explode: false
+        in: path
+        name: submission_id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveSubmissionRequestDto"
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      tags:
+      - submission-controller
+  /user/addToFavourites/{submission_id}:
+    post:
+      operationId: addToFavourites
+      parameters:
+      - explode: false
+        in: path
+        name: submission_id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      tags:
+      - user-controller
+  /submission:
+    post:
+      operationId: saveSubmission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveSubmissionRequestDto"
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SubmissionResponseDto"
+          description: OK
+      tags:
+      - submission-controller
+  /submission/role:
+    post:
+      operationId: saveRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveRoleRequestDto"
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RoleResponseDto"
+          description: OK
+      tags:
+      - submission-controller
+  /submission/company:
+    post:
+      operationId: saveCompany
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveCompanyRequestDto"
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CompanyResponseDto"
+          description: OK
+      tags:
+      - submission-controller
+  /populate/users:
+    post:
+      operationId: addUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: "#/components/schemas/SaveUserRequestDto"
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - populate-db-controller
+  /populate/submissions:
+    post:
+      operationId: addSubmissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: "#/components/schemas/SaveSubmissionsRequestDto"
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - populate-db-controller
+  /populate/roles:
+    post:
+      operationId: addRoles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: "#/components/schemas/SaveRoleRequestDto"
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - populate-db-controller
+  /populate/departments:
+    post:
+      operationId: addDepartments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: "#/components/schemas/SaveDepartmentRequestDto"
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - populate-db-controller
+  /populate/companies:
+    post:
+      operationId: addCompanies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: "#/components/schemas/SaveCompanyRequestDto"
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+      tags:
+      - populate-db-controller
+  /auth/refresh:
+    post:
+      operationId: refresh
+      parameters:
+      - explode: true
+        in: cookie
+        name: refreshToken
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RefreshTokenResponseDto"
+          description: OK
+      tags:
+      - auth-controller
+  /auth/login:
+    post:
+      operationId: dauthLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DauthLoginRequestDto"
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JwtResponseDto"
+          description: OK
+      tags:
+      - auth-controller
+  /user/profile:
+    get:
+      operationId: getUserProfile
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserProfileResponseDto"
+          description: OK
+      tags:
+      - user-controller
+  /user/favourites:
+    get:
+      operationId: getFavouritesByUserId
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: "#/components/schemas/SubmissionResponseDto"
+                type: array
+          description: OK
+      tags:
+      - user-controller
+  /user/removeFromFavourites/{submission_id}:
+    delete:
+      operationId: removeFromFavourites
+      parameters:
+      - explode: false
+        in: path
+        name: submission_id
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      tags:
+      - user-controller
+components:
+  schemas:
+    UpdateProfileRequestDto:
+      example:
+        profileUrl: profileUrl
+        isAnonymous: true
+        role: USER
+      properties:
+        profileUrl:
+          type: string
+        role:
+          enum:
+          - USER
+          - ADMIN
+          - MENTOR
+          type: string
+        isAnonymous:
+          type: boolean
+    JwtResponseDto:
+      example:
+        accessToken: accessToken
+        userDto:
+          profileUrl: profileUrl
+          year: 6
+          name: name
+          degree: BTECH
+          anonymous: true
+          id: 0
+          department: department
+          userRole: USER
+          email: email
+      properties:
+        accessToken:
+          type: string
+        userDto:
+          $ref: "#/components/schemas/UserDto"
+    UserDto:
+      example:
+        profileUrl: profileUrl
+        year: 6
+        name: name
+        degree: BTECH
+        anonymous: true
+        id: 0
+        department: department
+        userRole: USER
+        email: email
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        department:
+          type: string
+        year:
+          format: int32
+          type: integer
+        degree:
+          enum:
+          - BTECH
+          - MTECH
+          - MCA
+          type: string
+        userRole:
+          enum:
+          - USER
+          - ADMIN
+          - MENTOR
+          type: string
+        profileUrl:
+          type: string
+        anonymous:
+          type: boolean
+    SaveSubmissionRequestDto:
+      example:
+        benefits: benefits
+        endDate: 2000-01-23
+        roleId: 6
+        clubPositions: clubPositions
+        mistakes: mistakes
+        resources: resources
+        type: INTERN
+        experience: experience
+        piRounds: 9
+        stipendValue: 0.23021358869347652
+        companyId: 0
+        ctc: 0.5962133916683182
+        cgpa: 1.4658129805029452
+        basePay: 0.5637376656633328
+        startDate: 2000-01-23
+        otRounds: 7
+      properties:
+        companyId:
+          format: int32
+          type: integer
+        roleId:
+          format: int32
+          type: integer
+        type:
+          enum:
+          - INTERN
+          - PLACED
+          - INTERN_TO_PPO
+          type: string
+        benefits:
+          maxLength: 2000
+          minLength: 0
+          type: string
+        experience:
+          maxLength: 20000
+          minLength: 50
+          type: string
+        mistakes:
+          maxLength: 5000
+          minLength: 0
+          type: string
+        resources:
+          maxLength: 2000
+          minLength: 0
+          type: string
+        cgpa:
+          maximum: 10.0
+          minimum: 0.0
+          type: number
+        clubPositions:
+          maxLength: 1000
+          minLength: 0
+          type: string
+        ctc:
+          minimum: 0.0
+          type: number
+        basePay:
+          minimum: 0.0
+          type: number
+        stipendValue:
+          minimum: 0.0
+          type: number
+        otRounds:
+          format: int32
+          type: integer
+        piRounds:
+          format: int32
+          type: integer
+        startDate:
+          format: date
+          type: string
+        endDate:
+          format: date
+          type: string
+      required:
+      - companyId
+      - experience
+      - roleId
+      - type
+    CTCResponseDto:
+      example:
+        ctc: 5.962133916683182
+        basePay: 5.637376656633329
+      properties:
+        ctc:
+          type: number
+        basePay:
+          type: number
+    CompanyResponseDto:
+      example:
+        name: name
+        id: 6
+        logoUrl: logoUrl
+      properties:
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+        logoUrl:
+          type: string
+    ProcessStructureResponseDto:
+      example:
+        otRound: 2
+        endDate: 2000-01-23
+        piRound: 7
+        startDate: 2000-01-23
+      properties:
+        otRound:
+          format: int32
+          type: integer
+        piRound:
+          format: int32
+          type: integer
+        startDate:
+          format: date
+          type: string
+        endDate:
+          format: date
+          type: string
+    RoleResponseDto:
+      example:
+        name: name
+        description: description
+        id: 1
+      properties:
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+    SubmissionResponseDto:
+      example:
+        benefits: benefits
+        isFraud: true
+        role:
+          name: name
+          description: description
+          id: 1
+        clubPositions: clubPositions
+        stipend: 9.301444243932576
+        mistakes: mistakes
+        resources: resources
+        isOffensive: true
+        likeCount: 2
+        type: INTERN
+        experience: experience
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        ctc:
+          ctc: 5.962133916683182
+          basePay: 5.637376656633329
+        company:
+          name: name
+          id: 6
+          logoUrl: logoUrl
+        id: 0
+        cgpa: 3.616076749251911
+        processStructure:
+          otRound: 2
+          endDate: 2000-01-23
+          piRound: 7
+          startDate: 2000-01-23
+      properties:
+        id:
+          format: int32
+          type: integer
+        company:
+          $ref: "#/components/schemas/CompanyResponseDto"
+        role:
+          $ref: "#/components/schemas/RoleResponseDto"
+        type:
+          enum:
+          - INTERN
+          - PLACED
+          - INTERN_TO_PPO
+          type: string
+        ctc:
+          $ref: "#/components/schemas/CTCResponseDto"
+        processStructure:
+          $ref: "#/components/schemas/ProcessStructureResponseDto"
+        stipend:
+          type: number
+        benefits:
+          type: string
+        experience:
+          type: string
+        mistakes:
+          type: string
+        resources:
+          type: string
+        cgpa:
+          type: number
+        clubPositions:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        isFraud:
+          type: boolean
+        isOffensive:
+          type: boolean
+        likeCount:
+          format: int32
+          type: integer
+    SaveRoleRequestDto:
+      example:
+        roleName: roleName
+        description: description
+        id: 0
+      properties:
+        id:
+          format: int32
+          type: integer
+        roleName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        description:
+          maxLength: 5000
+          minLength: 0
+          type: string
+      required:
+      - roleName
+    SaveCompanyRequestDto:
+      example:
+        companyName: companyName
+        id: 0
+        logoUrl: logoUrl
+      properties:
+        id:
+          format: int32
+          type: integer
+        companyName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        logoUrl:
+          maxLength: 255
+          minLength: 0
+          type: string
+      required:
+      - companyName
+    SaveUserRequestDto:
+      example:
+        department_id: 6
+        year: 1
+        name: name
+        degree: BTECH
+        rollNo: 0
+        email: email
+      properties:
+        rollNo:
+          format: int64
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        degree:
+          enum:
+          - BTECH
+          - MTECH
+          - MCA
+          type: string
+        department_id:
+          format: int32
+          type: integer
+        year:
+          format: int32
+          type: integer
+    SaveSubmissionsRequestDto:
+      example:
+        benefits: benefits
+        endDate: 2000-01-23
+        roleId: 5
+        clubPositions: clubPositions
+        mistakes: mistakes
+        resources: resources
+        type: INTERN
+        experience: experience
+        piRounds: 2
+        userId: 6
+        stipendValue: 9.301444243932576
+        companyId: 1
+        ctc: 2.3021358869347655
+        id: 0
+        cgpa: 5.637376656633329
+        basePay: 7.061401241503109
+        startDate: 2000-01-23
+        otRounds: 3
+      properties:
+        id:
+          format: int32
+          type: integer
+        userId:
+          format: int64
+          type: integer
+        companyId:
+          format: int32
+          type: integer
+        roleId:
+          format: int32
+          type: integer
+        type:
+          enum:
+          - INTERN
+          - PLACED
+          - INTERN_TO_PPO
+          type: string
+        benefits:
+          type: string
+        experience:
+          type: string
+        mistakes:
+          type: string
+        resources:
+          type: string
+        cgpa:
+          type: number
+        clubPositions:
+          type: string
+        ctc:
+          type: number
+        basePay:
+          type: number
+        stipendValue:
+          type: number
+        otRounds:
+          format: int32
+          type: integer
+        piRounds:
+          format: int32
+          type: integer
+        startDate:
+          format: date
+          type: string
+        endDate:
+          format: date
+          type: string
+    SaveDepartmentRequestDto:
+      example:
+        departName: departName
+      properties:
+        departName:
+          type: string
+    RefreshTokenResponseDto:
+      example:
+        accessToken: accessToken
+      properties:
+        accessToken:
+          type: string
+    DauthLoginRequestDto:
+      example:
+        authorizationCode: authorizationCode
+      properties:
+        authorizationCode:
+          minLength: 1
+          type: string
+      required:
+      - authorizationCode
+    UserProfileResponseDto:
+      example:
+        profileUrl: profileUrl
+        mySubmissions:
+        - benefits: benefits
+          isFraud: true
+          role:
+            name: name
+            description: description
+            id: 1
+          clubPositions: clubPositions
+          stipend: 9.301444243932576
+          mistakes: mistakes
+          resources: resources
+          isOffensive: true
+          likeCount: 2
+          type: INTERN
+          experience: experience
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          ctc:
+            ctc: 5.962133916683182
+            basePay: 5.637376656633329
+          company:
+            name: name
+            id: 6
+            logoUrl: logoUrl
+          id: 0
+          cgpa: 3.616076749251911
+          processStructure:
+            otRound: 2
+            endDate: 2000-01-23
+            piRound: 7
+            startDate: 2000-01-23
+        - benefits: benefits
+          isFraud: true
+          role:
+            name: name
+            description: description
+            id: 1
+          clubPositions: clubPositions
+          stipend: 9.301444243932576
+          mistakes: mistakes
+          resources: resources
+          isOffensive: true
+          likeCount: 2
+          type: INTERN
+          experience: experience
+          createdAt: 2000-01-23T04:56:07.000+00:00
+          ctc:
+            ctc: 5.962133916683182
+            basePay: 5.637376656633329
+          company:
+            name: name
+            id: 6
+            logoUrl: logoUrl
+          id: 0
+          cgpa: 3.616076749251911
+          processStructure:
+            otRound: 2
+            endDate: 2000-01-23
+            piRound: 7
+            startDate: 2000-01-23
+        year: 6
+        name: name
+        degree: BTECH
+        id: 0
+        department: department
+        email: email
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        department:
+          type: string
+        year:
+          format: int32
+          type: integer
+        degree:
+          enum:
+          - BTECH
+          - MTECH
+          - MCA
+          type: string
+        profileUrl:
+          type: string
+        mySubmissions:
+          items:
+            $ref: "#/components/schemas/SubmissionResponseDto"
+          type: array
