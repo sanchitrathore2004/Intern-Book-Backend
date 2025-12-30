@@ -42,28 +42,8 @@ public class SubmissionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @SuppressWarnings("JvmTaintAnalysis")
     @PutMapping("/{submission_id}")
-    public ResponseEntity<SubmissionResponseDto> editSubmission(
-            @NotNull(message = "Submission Id should be not null")
-            @PathVariable(name = "submission_id")
-            Integer submissionId,
-            @Valid @RequestBody  SaveSubmissionRequestDto request
-    ){
-        var response = submissionService.updateSubmission(submissionId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @DeleteMapping("/{submission_id}")
-    public ResponseEntity<?> deleteSubmission(
-            @NotNull(message = "Submission Id should be not null")
-            @PathVariable(name = "submission_id")
-            Integer submissionId
-    ){
-        submissionService.deleteSubmission(submissionId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @PatchMapping("/{submission_id}")
     public ResponseEntity<?> editSubmission(
             @NotNull(message = "Submission Id should be not null")
             @PathVariable(name = "submission_id")
@@ -71,9 +51,7 @@ public class SubmissionController {
             @Valid @RequestBody  SaveSubmissionRequestDto request
     ){
         var response = submissionService.updateSubmission(submissionId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                Map.of("message", response)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{submission_id}")
