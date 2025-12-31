@@ -23,6 +23,9 @@ public class Company {
     @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column(name = "description")
+    private String description;
+
     @OneToMany(mappedBy = "company")
     private Set<CtcValue> ctcValues = new LinkedHashSet<>();
 
@@ -31,5 +34,8 @@ public class Company {
 
     @OneToMany(mappedBy = "company")
     private Set<Submission> submissions = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "favouriteCompany")
+    private Set<User> favouriteList = new LinkedHashSet<>();
 
 }

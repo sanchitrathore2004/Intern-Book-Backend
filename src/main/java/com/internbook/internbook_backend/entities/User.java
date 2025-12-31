@@ -52,6 +52,10 @@ public class User {
     @Column(name = "is_anonymous")
     private boolean isAnonymous;
 
+    @ManyToOne
+    @JoinColumn(name = "favourite_company_id")
+    private Company favouriteCompany;
+
     @ManyToMany
     @JoinTable(
             name = "favourites",
