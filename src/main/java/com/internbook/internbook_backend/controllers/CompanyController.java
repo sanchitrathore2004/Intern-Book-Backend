@@ -1,6 +1,6 @@
 package com.internbook.internbook_backend.controllers;
 
-import com.internbook.internbook_backend.dtos.CompanyResponseDto;
+import com.internbook.internbook_backend.dtos.CompanyPageResponseDto;
 import com.internbook.internbook_backend.exceptions.CompanyNotFoundException;
 import com.internbook.internbook_backend.repositories.CompanyRepository;
 import com.internbook.internbook_backend.services.CompanyService;
@@ -19,7 +19,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping("/{companyId}")
-    public ResponseEntity<CompanyResponseDto> getCompany(@PathVariable(name = "companyId")Integer companyId) {
+    public ResponseEntity<CompanyPageResponseDto> getCompany(@PathVariable(name = "companyId")Integer companyId) {
         var companyResponseDto = companyService.getCompany(companyId);
         return ResponseEntity.ok(companyResponseDto);
     }
