@@ -24,6 +24,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getFavouriteSubmissions());
     }
 
+    @PutMapping("/toggleFavourites/{submission_id}")
+    private ResponseEntity<ToggleResponseDto> toggleFavourites(
+            @PathVariable(name="submission_id") Integer submissionId
+    ) {
+        var response = userService.toggleFavourites(submissionId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/addToFavourites/{submission_id}")
     private ResponseEntity<?> addToFavourites(
             @NotNull(message = "Submission Id should not be null")
