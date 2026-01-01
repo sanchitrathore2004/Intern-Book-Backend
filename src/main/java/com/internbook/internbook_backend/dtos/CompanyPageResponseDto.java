@@ -19,5 +19,5 @@ public class CompanyPageResponseDto {
     private BigDecimal averageStipend;
     private BigDecimal averageBase;
     private Integer favoriteCount;
-    private List<SubmissionResponseDto> submission;
+    private List<SubmissionCardResponseDto> submission;
 }

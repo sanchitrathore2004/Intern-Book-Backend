@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Integer> {
 
@@ -22,4 +23,14 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
 
     @EntityGraph(attributePaths = {"company", "role", "processStructure", "ctcValue", "stipend"})
     List<Submission> findAllByUserId(Long id);
+
+    @Query("""
+    SELECT s.id
+    FROM User u
+    JOIN u.favouriteSubmissions s
+    WHERE u.id = :userId
+""")
+    Set<Integer> findFavouriteSubmissionIds(@Param("userId") Long userId);
+
+
 }
