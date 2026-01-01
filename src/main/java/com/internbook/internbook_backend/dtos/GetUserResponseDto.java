@@ -8,7 +8,15 @@ import java.util.List;
 
 @Data
 public class GetUserResponseDto {
-    private UserDto user;
+    private Long id;
+    private String name;
+    private String email;
+    private String department;
+    private Integer year;
+    private Degree degree;
+    private UserRole userRole;
+    private boolean isAnonymous;
+    private String profileUrl;
     private int favouritesCount;
     private int submissionsCount;
     private List<FavouriteShortResponseDto> favourites;

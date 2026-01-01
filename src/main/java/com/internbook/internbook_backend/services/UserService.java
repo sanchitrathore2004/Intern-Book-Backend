@@ -102,8 +102,15 @@ public class UserService {
         var user = authService.getCurrentUser();
 
         GetUserResponseDto dto = new GetUserResponseDto();
-        dto.setUser(userMapper.toDto(user));
-
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setDegree(user.getDegree());
+        dto.setProfileUrl(user.getProfileUrl());
+        dto.setAnonymous(user.isAnonymous());
+        dto.setDepartment(user.getDepartment().getName());
+        dto.setUserRole(user.getUserRole());
+        dto.setYear(user.getYear());
         dto.setFavouritesCount((int) userRepository.countFavouritesByUserId(user.getId()));
         dto.setSubmissionsCount(submissionRepository.countByUserId(user.getId()));
 
