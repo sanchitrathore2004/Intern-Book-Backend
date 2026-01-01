@@ -14,4 +14,7 @@ public class SaveCompanyRequestDto {
 
     @Size(max = 255)
     private String logoUrl;
+
+    @Size(max = 1024)
+    private String description;
 }

@@ -16,7 +16,7 @@ public class UserProfileResponseDto {
     private Degree degree;
     private String profileUrl;
 
-    private List<SubmissionResponseDto> mySubmissions;
+    private List<SubmissionCardResponseDto> mySubmissions;
 
     public UserProfileResponseDto(User user) {
         this.id = user.getId();

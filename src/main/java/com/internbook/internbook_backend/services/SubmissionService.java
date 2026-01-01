@@ -15,7 +15,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -82,6 +83,8 @@ public class SubmissionService {
         company.setName(request.getCompanyName());
         if(request.getLogoUrl() != null)
             company.setLogoUrl(request.getLogoUrl());
+        if(request.getDescription() != null)
+            company.setDescription(request.getDescription());
 
         companyRepository.save(company);
         return companyMapper.toDto(company);
@@ -165,6 +168,57 @@ public class SubmissionService {
         return toSubmissionResponseDto(submission);
     }
 
+    public List<SubmissionCardResponseDto> generateSubmissionCardResponseDtos(Company company) {
+        Set<Integer> favouriteSubmissionIds =
+                submissionRepository.findFavouriteSubmissionIds(
+                        authService.getCurrentUser().getId()
+                );
+        return company.getSubmissions()
+                .stream()
+                .map(submission -> submissionToSubmissionCardResponseDto(
+                        submission,
+                        favouriteSubmissionIds
+                ))
+                .toList();
+    }
+
+    public SubmissionCardResponseDto submissionToSubmissionCardResponseDto(
+            Submission submission,
+            Set<Integer> favouriteSubmissionIds
+    ) {
+        SubmissionCardResponseDto submissionCardResponseDto = new SubmissionCardResponseDto();
+        submissionCardResponseDto.setId(submission.getId());
+        submissionCardResponseDto.setCompanyName(submission.getCompany().getName());
+        submissionCardResponseDto.setUserName(submission.getUser().getName());
+        submissionCardResponseDto.setSubmissionType(submission.getType());
+        submissionCardResponseDto.setRole(submission.getRole().getName());
+        submissionCardResponseDto.setYear(submission.getUser().getYear());
+        submissionCardResponseDto.setCompanyLogoUrl(submission.getCompany().getLogoUrl());
+        submissionCardResponseDto.setTags(generateTags(submission));
+        submissionCardResponseDto.setFavourite(
+                favouriteSubmissionIds.contains(submission.getId())
+        );
+        return submissionCardResponseDto;
+    }
+
+    public List<String> generateTags(Submission submission) {
+        return Stream.of(
+                        entry(submission.getCtcValue(), "CTC"),
+                        entry(submission.getStipend(), "Stipend"),
+                        entry(submission.getProcessStructure(), "Schedule"),
+                        entry(submission.getExperience(), "Experience"),
+                        entry(submission.getMistakes(), "Mistakes"),
+                        entry(submission.getBenefits(), "Benefits"),
+                        entry(submission.getResources(), "Resources")
+                )
+                .filter(e -> e.getKey() != null && !(e.getKey() instanceof Collection<?> c && c.isEmpty()))
+                .map(Map.Entry::getValue)
+                .toList();
+    }
+
+    private Map.Entry<Object, String> entry(Object value, String tag) {
+        return Map.entry(value, tag);
+    }
 
     public void deleteSubmission(Integer submissionId) {
         Submission submission = validateUserSubmission(submissionId);

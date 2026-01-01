@@ -1,9 +1,6 @@
 package com.internbook.internbook_backend.services;
 
-import com.internbook.internbook_backend.dtos.SubmissionResponseDto;
-import com.internbook.internbook_backend.dtos.ToggleResponseDto;
-import com.internbook.internbook_backend.dtos.UpdateProfileRequestDto;
-import com.internbook.internbook_backend.dtos.UserProfileResponseDto;
+import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.Submission;
 import com.internbook.internbook_backend.entities.User;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -26,9 +24,18 @@ public class UserService {
         var user = authService.getCurrentUser();
         var submissions = submissionRepository.findAllByUserId(user.getId());
 
-        List<SubmissionResponseDto> mySubmissions =  submissions.stream()
-                .map(submissionService::toSubmissionResponseDto)
-                .toList();
+        Set<Integer> favouriteSubmissionIds =
+                submissionRepository.findFavouriteSubmissionIds(user.getId());
+
+        List<SubmissionCardResponseDto> mySubmissions =
+                submissions.stream()
+                        .map(submission ->
+                                submissionService.submissionToSubmissionCardResponseDto(
+                                        submission,
+                                        favouriteSubmissionIds
+                                )
+                        )
+                        .toList();
 
         var profileDto = new UserProfileResponseDto(user);
         profileDto.setMySubmissions(mySubmissions);
