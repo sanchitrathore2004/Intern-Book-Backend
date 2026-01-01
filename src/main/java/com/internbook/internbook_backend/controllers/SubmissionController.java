@@ -1,6 +1,8 @@
 package com.internbook.internbook_backend.controllers;
 
 import com.internbook.internbook_backend.dtos.*;
+import com.internbook.internbook_backend.repositories.SubmissionRepository;
+import com.internbook.internbook_backend.services.AuthService;
 import com.internbook.internbook_backend.services.SubmissionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -9,11 +11,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/submission")
 public class SubmissionController {
     private final SubmissionService submissionService;
+    private final SubmissionRepository submissionRepository;
+    private final AuthService authService;
 
     @PostMapping
     public ResponseEntity<SubmissionResponseDto> saveSubmission(
@@ -62,5 +68,11 @@ public class SubmissionController {
     ){
         submissionService.deleteSubmission(submissionId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<SubmissionCardResponseDto>> getTopSubmissions() {
+        List<SubmissionCardResponseDto> response = submissionService.getTopSubmission();
+        return ResponseEntity.ok(response);
     }
 }
