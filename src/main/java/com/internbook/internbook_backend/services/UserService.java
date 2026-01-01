@@ -1,6 +1,7 @@
 package com.internbook.internbook_backend.services;
 
 import com.internbook.internbook_backend.dtos.SubmissionResponseDto;
+import com.internbook.internbook_backend.dtos.ToggleResponseDto;
 import com.internbook.internbook_backend.dtos.UpdateProfileRequestDto;
 import com.internbook.internbook_backend.dtos.UserProfileResponseDto;
 import com.internbook.internbook_backend.entities.Submission;
@@ -9,6 +10,7 @@ import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -40,6 +42,23 @@ public class UserService {
         user.setAnonymous(request.getIsAnonymous());
         userRepository.save(user);
         return user;
+    }
+
+    public ToggleResponseDto toggleFavourites(Integer submissionId) {
+        User user = authService.getCurrentUser();
+        Submission submission = submissionRepository.getReferenceById(submissionId);
+        var favouriteSubmissions = user.getFavouriteSubmissions();
+        var response = new ToggleResponseDto();
+        if(favouriteSubmissions.contains(submission)) {
+            favouriteSubmissions.remove(submission);
+            response.setFavourite(false);
+        }
+        else {
+            favouriteSubmissions.add(submission);
+            response.setFavourite(true);
+        }
+        userRepository.save(user);
+        return response;
     }
 
     public void deleteFromFavourite(Integer submissionId) {
