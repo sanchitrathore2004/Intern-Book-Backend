@@ -32,6 +32,27 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
 """)
     Set<Integer> findFavouriteSubmissionIds(@Param("userId") Long userId);
 
+    @Query("""
+    SELECT DISTINCT s
+    FROM Submission s
+    JOIN FETCH s.user u
+    JOIN FETCH s.company c
+    JOIN FETCH s.role r
+    LEFT JOIN FETCH s.ctcValue
+    LEFT JOIN FETCH s.processStructure
+    LEFT JOIN FETCH s.stipend
+    WHERE
+        u.department.id = :departmentId
+        OR (
+            :companyId IS NOT NULL
+            AND c.id = :companyId
+        )
+    ORDER BY s.likeCount DESC
+""")
+    List<Submission> findTopSubmissions(
+            @Param("departmentId") Integer departmentId,
+            @Param("companyId") Integer companyId
+    );
 
     int countByUserId(Long userId);
 }

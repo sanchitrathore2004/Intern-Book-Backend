@@ -302,4 +302,29 @@ public class SubmissionService {
 
         submissionRepository.save(submission);
     }
+
+    public List<SubmissionCardResponseDto> getTopSubmission () {
+        var user = authService.getCurrentUser();
+        Integer companyId = user.getFavouriteCompany() != null
+                ? user.getFavouriteCompany().getId()
+                : null;
+        List<Submission> submissions =
+                submissionRepository.findTopSubmissions(
+                        user.getDepartment().getId(),
+                        companyId
+                );
+        Set<Integer> favouriteSubmissionIds =
+                submissionRepository.findFavouriteSubmissionIds(user.getId());
+        List<SubmissionCardResponseDto> response =
+                submissions.stream()
+                        .limit(10)
+                        .map(submission ->
+                                submissionToSubmissionCardResponseDto(
+                                        submission,
+                                        favouriteSubmissionIds
+                                )
+                        )
+                        .toList();
+        return response;
+    }
 }
