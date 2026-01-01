@@ -15,6 +15,7 @@ public class UserProfileResponseDto {
     private Integer year;
     private Degree degree;
     private String profileUrl;
+    private CompanyResponseDto favouriteCompany;
 
     private List<SubmissionCardResponseDto> mySubmissions;
 

@@ -3,6 +3,7 @@ package com.internbook.internbook_backend.services;
 import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.Submission;
 import com.internbook.internbook_backend.entities.User;
+import com.internbook.internbook_backend.mappers.CompanyMapper;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class UserService {
     private final SubmissionRepository submissionRepository;
     private final SubmissionService submissionService;
     private final UserRepository userRepository;
+    private final CompanyMapper companyMapper;
 
     public UserProfileResponseDto getUserProfile() {
         var user = authService.getCurrentUser();
@@ -39,6 +41,7 @@ public class UserService {
 
         var profileDto = new UserProfileResponseDto(user);
         profileDto.setMySubmissions(mySubmissions);
+        profileDto.setFavouriteCompany(companyMapper.toDto(user.getFavouriteCompany()));
         return profileDto;
     }
 
