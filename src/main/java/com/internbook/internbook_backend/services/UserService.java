@@ -8,6 +8,7 @@ import com.internbook.internbook_backend.mappers.CompanyMapper;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -96,31 +97,22 @@ public class UserService {
     }
 
     public GetUserResponseDto getUser() {
-        var  user = authService.getCurrentUser();
-        GetUserResponseDto getUserResponseDto = new GetUserResponseDto();
-        getUserResponseDto.setUser(userMapper.toDto(user));
-        Set<Submission> favouriteSubmissions = user.getFavouriteSubmissions();
-        getUserResponseDto.setFavouritesCount(favouriteSubmissions.size());
-        getUserResponseDto.setSubmissionsCount(getSubmissionsCount(user.getId()));
-        getUserResponseDto.setFavourites(getFavouriteShortResponseDtos(favouriteSubmissions));
-        return getUserResponseDto;
+        var user = authService.getCurrentUser();
+
+        GetUserResponseDto dto = new GetUserResponseDto();
+        dto.setUser(userMapper.toDto(user));
+
+        dto.setFavouritesCount((int) userRepository.countFavouritesByUserId(user.getId()));
+        dto.setSubmissionsCount(submissionRepository.countByUserId(user.getId()));
+
+        dto.setFavourites(
+                userRepository.findTop3Favourites(
+                        user.getId(),
+                        PageRequest.of(0, 3)
+                )
+        );
+        return dto;
     }
 
-    private int getSubmissionsCount(Long userId) {
-        return submissionRepository.findAllByUserId(userId).size();
-    }
-
-    private List<FavouriteShortResponseDto> getFavouriteShortResponseDtos(Set<Submission> favouriteSubmissions) {
-        return favouriteSubmissions.stream()
-                .sorted(Comparator.comparing(Submission::getCreatedAt).reversed())
-                .limit(3)
-                .map(e-> new FavouriteShortResponseDto(
-                        e.getId(),
-                        e.getCompany().getId(),
-                        e.getCompany().getName(),
-                        e.getUser().getName()
-                ))
-                .toList();
-    }
 }
 

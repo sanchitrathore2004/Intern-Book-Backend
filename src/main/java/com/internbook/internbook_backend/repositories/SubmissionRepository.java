@@ -33,4 +33,5 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     Set<Integer> findFavouriteSubmissionIds(@Param("userId") Long userId);
 
 
+    int countByUserId(Long userId);
 }
