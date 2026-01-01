@@ -9,6 +9,7 @@ import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +27,11 @@ public class UserService {
     private final CompanyMapper companyMapper;
     private final UserMapper userMapper;
 
-    public UserProfileResponseDto getUserProfile() {
-        var user = authService.getCurrentUser();
+    public UserProfileResponseDto getProfileById(Long userId) {
+        var user = userRepository.findById(userId).orElse(null);
+        if(user == null)
+            throw new UsernameNotFoundException("User not found");
+
         var submissions = submissionRepository.findAllByUserId(user.getId());
 
         Set<Integer> favouriteSubmissionIds =

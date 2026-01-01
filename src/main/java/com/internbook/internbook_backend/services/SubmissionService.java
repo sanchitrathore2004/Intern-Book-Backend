@@ -15,6 +15,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -33,8 +35,6 @@ public class SubmissionService {
     private final CompanyMapper companyMapper;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
-    private final CtcValueRepository ctcValueRepository;
-    private final StipendRepository stipendRepository;
 
     @Transactional
     public SubmissionResponseDto saveSubmission(SaveSubmissionRequestDto request) {
@@ -111,6 +111,7 @@ public class SubmissionService {
         dto.setType(sub.getType());
 
         var user = sub.getUser();
+        dto.setAuthorId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setProfileUrl(user.getProfileUrl());

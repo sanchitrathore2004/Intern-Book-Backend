@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class SubmissionResponseDto {
     private Integer id;
 
+    private Long authorId;
     private String name;
     private String email;
     private DepartmentResponseDto department;

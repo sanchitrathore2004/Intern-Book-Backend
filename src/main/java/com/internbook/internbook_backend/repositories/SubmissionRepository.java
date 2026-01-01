@@ -22,7 +22,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     })
     List<Submission> findFavouriteSubmissions(@Param("userId") Long userId);
 
-    @EntityGraph(attributePaths = {"company", "role", "processStructure", "ctcValue", "stipend"})
+    @EntityGraph(attributePaths = {"company", "role", "processStructure", "ctcValue", "stipend", "user.department"})
     List<Submission> findAllByUserId(Long id);
 
     @Query("""
