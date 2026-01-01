@@ -15,6 +15,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -33,8 +35,6 @@ public class SubmissionService {
     private final CompanyMapper companyMapper;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
-    private final CtcValueRepository ctcValueRepository;
-    private final StipendRepository stipendRepository;
 
     @Transactional
     public SubmissionResponseDto saveSubmission(SaveSubmissionRequestDto request) {
@@ -102,34 +102,49 @@ public class SubmissionService {
 
     public SubmissionResponseDto toSubmissionResponseDto(Submission sub) {
         var dto = new SubmissionResponseDto();
+
         dto.setId(sub.getId());
         dto.setCgpa(sub.getCgpa());
         dto.setBenefits(sub.getBenefits());
         dto.setExperience(sub.getExperience());
-        dto.setMistakes(sub.getMistakes());
-        dto.setClubPositions(sub.getClubPositions());
         dto.setCreatedAt(sub.getCreatedAt());
         dto.setType(sub.getType());
-        dto.setResources(sub.getResources());
-        dto.setIsFraud(sub.getIsFraud());
-        dto.setIsOffensive(sub.getIsOffensive());
-        dto.setLikeCount(sub.getLikeCount());
 
-        if ((sub.getType() == SubmissionType.PLACED ||
-                sub.getType() == SubmissionType.INTERN_TO_PPO) &&
-                sub.getCtcValue() != null) {
+        var user = sub.getUser();
+        dto.setAuthorId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setProfileUrl(user.getProfileUrl());
+
+        if (user.getDepartment() != null) {
+            var deptDto = new DepartmentResponseDto();
+            deptDto.setId(user.getDepartment().getId());
+            deptDto.setName(user.getDepartment().getName());
+            dto.setDepartment(deptDto);
+        }
+
+        if ((sub.getType() == SubmissionType.PLACED || sub.getType() == SubmissionType.INTERN_TO_PPO)
+                && sub.getCtcValue() != null) {
             dto.setCtc(ctcMapper.toDto(sub.getCtcValue()));
         }
 
-        if (sub.getType() == SubmissionType.INTERN &&
-                sub.getStipend() != null) {
+        if (sub.getType() == SubmissionType.INTERN && sub.getStipend() != null) {
             dto.setStipend(sub.getStipend().getStipend());
         }
 
         dto.setCompany(companyMapper.toDto(sub.getCompany()));
         dto.setRole(roleMapper.toDto(sub.getRole()));
         dto.setProcessStructure(processStructureMapper.toDto(sub.getProcessStructure()));
+
         return dto;
+    }
+
+    public SubmissionResponseDto getSubmissionById(Integer id) {
+        var submission = submissionRepository.findWithAllDetails(id).orElse(null);
+        if(submission == null)
+            throw new UsernameNotFoundException("Submission not found");
+
+        return toSubmissionResponseDto(submission);
     }
 
     @Transactional

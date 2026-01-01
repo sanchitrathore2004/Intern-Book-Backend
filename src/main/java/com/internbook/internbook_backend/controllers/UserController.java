@@ -52,9 +52,11 @@ public class UserController {
         return  ResponseEntity.ok().build();
     }
 
-    @GetMapping("/profile")
-    private ResponseEntity<UserProfileResponseDto> getUserProfile() {
-        return ResponseEntity.ok(userService.getUserProfile());
+    @GetMapping("/profile/{user_id}")
+    private ResponseEntity<UserProfileResponseDto> getProfileById(
+            @PathVariable(name = "user_id") Long userId
+    ) {
+        return ResponseEntity.ok(userService.getProfileById(userId));
     }
 
     @PutMapping("/updateProfile")

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Integer> {
@@ -21,7 +22,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     })
     List<Submission> findFavouriteSubmissions(@Param("userId") Long userId);
 
-    @EntityGraph(attributePaths = {"company", "role", "processStructure", "ctcValue", "stipend"})
+    @EntityGraph(attributePaths = {"company", "role", "processStructure", "ctcValue", "stipend", "user.department"})
     List<Submission> findAllByUserId(Long id);
 
     @Query("""
@@ -32,6 +33,16 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
 """)
     Set<Integer> findFavouriteSubmissionIds(@Param("userId") Long userId);
 
+    @Query("SELECT s FROM Submission s " +
+            "JOIN FETCH s.user u " +
+            "JOIN FETCH u.department d " +
+            "JOIN FETCH s.role r " +
+            "JOIN FETCH s.company c " +
+            "LEFT JOIN FETCH s.processStructure ps " +
+            "LEFT JOIN FETCH s.ctcValue cv " +
+            "LEFT JOIN FETCH s.stipend st " +
+            "WHERE s.id = :userId")
+    Optional<Submission> findWithAllDetails(@Param("userId") Integer userId);
     @Query("""
     SELECT DISTINCT s
     FROM Submission s

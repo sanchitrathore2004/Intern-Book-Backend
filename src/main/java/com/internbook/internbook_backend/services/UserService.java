@@ -7,7 +7,9 @@ import com.internbook.internbook_backend.mappers.UserMapper;
 import com.internbook.internbook_backend.mappers.CompanyMapper;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +27,11 @@ public class UserService {
     private final CompanyMapper companyMapper;
     private final UserMapper userMapper;
 
-    public UserProfileResponseDto getUserProfile() {
-        var user = authService.getCurrentUser();
+    public UserProfileResponseDto getProfileById(Long userId) {
+        var user = userRepository.findById(userId).orElse(null);
+        if(user == null)
+            throw new UsernameNotFoundException("User not found");
+
         var submissions = submissionRepository.findAllByUserId(user.getId());
 
         Set<Integer> favouriteSubmissionIds =
@@ -57,35 +62,32 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     public ToggleResponseDto toggleFavourites(Integer submissionId) {
-        User user = authService.getCurrentUser();
-        Submission submission = submissionRepository.getReferenceById(submissionId);
-        var favouriteSubmissions = user.getFavouriteSubmissions();
+        Long userId = authService.getCurrentUser().getId();
         var response = new ToggleResponseDto();
-        if(favouriteSubmissions.contains(submission)) {
-            favouriteSubmissions.remove(submission);
+
+        boolean exists = userRepository.isFavourite(userId, submissionId);
+
+        if (exists) {
+            userRepository.removeFavourite(userId, submissionId);
             response.setFavourite(false);
-        }
-        else {
-            favouriteSubmissions.add(submission);
+        } else {
+            userRepository.addFavourite(userId, submissionId);
             response.setFavourite(true);
         }
-        userRepository.save(user);
+
         return response;
     }
 
+    @Transactional
     public void deleteFromFavourite(Integer submissionId) {
-        User user = authService.getCurrentUser();
-        Submission submission = submissionRepository.getReferenceById(submissionId);
-        user.getFavouriteSubmissions().remove(submission);
-        userRepository.save(user);
+        userRepository.removeFavourite(authService.getCurrentUser().getId(), submissionId);
     }
 
+    @Transactional
     public void addToFavourite(Integer submissionId) {
-        var user = authService.getCurrentUser();
-        Submission submission = submissionRepository.getReferenceById(submissionId);
-        user.getFavouriteSubmissions().add(submission);
-        userRepository.save(user);
+        userRepository.addFavourite(authService.getCurrentUser().getId(), submissionId);
     }
 
     public List<SubmissionResponseDto> getFavouriteSubmissions() {
