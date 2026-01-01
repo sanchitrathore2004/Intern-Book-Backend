@@ -5,6 +5,9 @@ import com.internbook.internbook_backend.entities.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +21,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = {"department"})
     Optional<User> findOneById(Long id);
+
+    @Query("SELECT COUNT(s) > 0 FROM User u JOIN u.favouriteSubmissions s WHERE u.id = :userId AND s.id = :subId")
+    boolean isFavourite(@Param("userId") Long userId, @Param("subId") Integer subId);
+
+    @Modifying
+    @Query(value = "INSERT INTO favourites (user_id, submission_id) VALUES (:userId, :subId)", nativeQuery = true)
+    void addFavourite(@Param("userId") Long userId, @Param("subId") Integer subId);
+
+    @Modifying
+    @Query(value = "DELETE FROM favourites WHERE user_id = :userId AND submission_id = :subId", nativeQuery = true)
+    void removeFavourite(@Param("userId") Long userId, @Param("subId") Integer subId);
 
     @Query("""
         select count(s)

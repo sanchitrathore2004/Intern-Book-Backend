@@ -48,6 +48,13 @@ public class SubmissionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @GetMapping("/{submission_id}")
+    public ResponseEntity<SubmissionResponseDto> getSubmissionById(
+            @PathVariable(name="submission_id") Integer submissionId
+    ) {
+        return ResponseEntity.ok(submissionService.getSubmissionById(submissionId));
+    }
+
     @SuppressWarnings("JvmTaintAnalysis")
     @PutMapping("/{submission_id}")
     public ResponseEntity<?> editSubmission(

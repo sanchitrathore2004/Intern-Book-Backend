@@ -102,34 +102,48 @@ public class SubmissionService {
 
     public SubmissionResponseDto toSubmissionResponseDto(Submission sub) {
         var dto = new SubmissionResponseDto();
+
         dto.setId(sub.getId());
         dto.setCgpa(sub.getCgpa());
         dto.setBenefits(sub.getBenefits());
         dto.setExperience(sub.getExperience());
-        dto.setMistakes(sub.getMistakes());
-        dto.setClubPositions(sub.getClubPositions());
         dto.setCreatedAt(sub.getCreatedAt());
         dto.setType(sub.getType());
-        dto.setResources(sub.getResources());
-        dto.setIsFraud(sub.getIsFraud());
-        dto.setIsOffensive(sub.getIsOffensive());
-        dto.setLikeCount(sub.getLikeCount());
 
-        if ((sub.getType() == SubmissionType.PLACED ||
-                sub.getType() == SubmissionType.INTERN_TO_PPO) &&
-                sub.getCtcValue() != null) {
+        var user = sub.getUser();
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setProfileUrl(user.getProfileUrl());
+
+        if (user.getDepartment() != null) {
+            var deptDto = new DepartmentResponseDto();
+            deptDto.setId(user.getDepartment().getId());
+            deptDto.setName(user.getDepartment().getName());
+            dto.setDepartment(deptDto);
+        }
+
+        if ((sub.getType() == SubmissionType.PLACED || sub.getType() == SubmissionType.INTERN_TO_PPO)
+                && sub.getCtcValue() != null) {
             dto.setCtc(ctcMapper.toDto(sub.getCtcValue()));
         }
 
-        if (sub.getType() == SubmissionType.INTERN &&
-                sub.getStipend() != null) {
+        if (sub.getType() == SubmissionType.INTERN && sub.getStipend() != null) {
             dto.setStipend(sub.getStipend().getStipend());
         }
 
         dto.setCompany(companyMapper.toDto(sub.getCompany()));
         dto.setRole(roleMapper.toDto(sub.getRole()));
         dto.setProcessStructure(processStructureMapper.toDto(sub.getProcessStructure()));
+
         return dto;
+    }
+
+    public SubmissionResponseDto getSubmissionById(Integer id) {
+        var submission = submissionRepository.findWithAllDetails(id).orElse(null);
+        if(submission == null)
+            throw new UsernameNotFoundException("Submission not found");
+
+        return toSubmissionResponseDto(submission);
     }
 
     @Transactional

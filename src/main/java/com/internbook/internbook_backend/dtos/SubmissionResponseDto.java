@@ -1,5 +1,6 @@
 package com.internbook.internbook_backend.dtos;
 
+import com.internbook.internbook_backend.enums.Degree;
 import com.internbook.internbook_backend.enums.SubmissionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,13 +13,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubmissionResponseDto {
-   private Integer id;
+    private Integer id;
 
-   private CompanyResponseDto company;
-   private RoleResponseDto role;
-   private SubmissionType type;
-   private CTCResponseDto ctc;
-   private ProcessStructureResponseDto processStructure;
+    private String name;
+    private String email;
+    private DepartmentResponseDto department;
+    private Integer year;
+    private Degree degree;
+    private String profileUrl;
+
+    private CompanyResponseDto company;
+    private RoleResponseDto role;
+    private SubmissionType type;
+    private CTCResponseDto ctc;
+    private ProcessStructureResponseDto processStructure;
 
     private BigDecimal stipend;
     private String benefits;
@@ -32,5 +40,4 @@ public class SubmissionResponseDto {
     private Boolean isFraud;
     private Boolean isOffensive;
     private Integer likeCount;
-
 }

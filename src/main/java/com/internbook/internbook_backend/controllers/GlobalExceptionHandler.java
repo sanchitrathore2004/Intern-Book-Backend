@@ -4,10 +4,12 @@ import com.internbook.internbook_backend.dtos.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,5 +32,29 @@ public class GlobalExceptionHandler {
         });
 
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleNotFoundExceptions() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ErrorDto("Data not found")
+        );
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<ErrorDto> handleIntegrityViolationException(
+            SQLIntegrityConstraintViolationException ex
+    ) {
+        String detailedMessage = "Database integrity constraint violated.";
+
+        if (ex.getMessage().contains("Duplicate entry")) {
+            detailedMessage = "This record already exists (Duplicate entry).";
+        } else if (ex.getMessage().contains("foreign key constraint fails")) {
+            detailedMessage = "Referenced record (User or Submission) was not found.";
+        }
+
+        ErrorDto errorBody = new ErrorDto(detailedMessage);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
     }
 }
