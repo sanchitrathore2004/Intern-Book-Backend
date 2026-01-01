@@ -64,4 +64,9 @@ public class UserController {
     ) {
         return authService.updateProfile(userService.updateProfile(request), response);
     }
+
+    @GetMapping("/me")
+    private ResponseEntity<GetUserResponseDto> getCurrentUserProfile() {
+      return ResponseEntity.ok(userService.getUser());
+    }
 }

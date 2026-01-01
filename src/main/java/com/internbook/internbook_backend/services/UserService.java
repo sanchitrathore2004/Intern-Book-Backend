@@ -3,13 +3,15 @@ package com.internbook.internbook_backend.services;
 import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.Submission;
 import com.internbook.internbook_backend.entities.User;
+import com.internbook.internbook_backend.mappers.UserMapper;
 import com.internbook.internbook_backend.mappers.CompanyMapper;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ public class UserService {
     private final SubmissionService submissionService;
     private final UserRepository userRepository;
     private final CompanyMapper companyMapper;
+    private final UserMapper userMapper;
 
     public UserProfileResponseDto getUserProfile() {
         var user = authService.getCurrentUser();
@@ -92,5 +95,24 @@ public class UserService {
                 .map(submissionService::toSubmissionResponseDto)
                 .toList();
     }
+
+    public GetUserResponseDto getUser() {
+        var user = authService.getCurrentUser();
+
+        GetUserResponseDto dto = new GetUserResponseDto();
+        dto.setUser(userMapper.toDto(user));
+
+        dto.setFavouritesCount((int) userRepository.countFavouritesByUserId(user.getId()));
+        dto.setSubmissionsCount(submissionRepository.countByUserId(user.getId()));
+
+        dto.setFavourites(
+                userRepository.findTop3Favourites(
+                        user.getId(),
+                        PageRequest.of(0, 3)
+                )
+        );
+        return dto;
+    }
+
 }
 
