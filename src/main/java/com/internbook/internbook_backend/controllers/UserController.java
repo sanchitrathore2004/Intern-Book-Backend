@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/favourites")
-    public ResponseEntity<List<SubmissionResponseDto>> getFavouritesByUserId() {
+    public ResponseEntity<List<SubmissionCardResponseDto>> getFavouritesByUserId() {
         return ResponseEntity.ok(userService.getFavouriteSubmissions());
     }
 

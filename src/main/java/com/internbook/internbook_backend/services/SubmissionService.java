@@ -232,6 +232,8 @@ public class SubmissionService {
     }
 
     private Map.Entry<Object, String> entry(Object value, String tag) {
+        if(value == null)
+            value = "";
         return Map.entry(value, tag);
     }
 
