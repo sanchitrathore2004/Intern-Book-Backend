@@ -3,6 +3,7 @@ package com.internbook.internbook_backend.services;
 import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.Submission;
 import com.internbook.internbook_backend.entities.User;
+import com.internbook.internbook_backend.exceptions.ProfilePictureUploadException;
 import com.internbook.internbook_backend.mappers.UserMapper;
 import com.internbook.internbook_backend.mappers.CompanyMapper;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
@@ -134,5 +135,15 @@ public class UserService {
         return dto;
     }
 
+    public Void updateDp (String profileUrl) {
+        try {
+            var user = authService.getCurrentUser();
+            user.setProfileUrl(profileUrl);
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new ProfilePictureUploadException();
+        }
+        return null;
+    }
 }
 

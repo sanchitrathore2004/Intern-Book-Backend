@@ -1,16 +1,20 @@
 package com.internbook.internbook_backend.controllers;
 
 import com.internbook.internbook_backend.dtos.*;
+import com.internbook.internbook_backend.exceptions.ProfilePictureUploadException;
+import com.internbook.internbook_backend.repositories.UserRepository;
 import com.internbook.internbook_backend.services.AuthService;
 import com.internbook.internbook_backend.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -18,6 +22,7 @@ import java.util.List;
 public class UserController {
     private final AuthService authService;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @GetMapping("/favourites")
     public ResponseEntity<List<SubmissionCardResponseDto>> getFavouritesByUserId() {
@@ -70,5 +75,18 @@ public class UserController {
     @GetMapping("/me")
     private ResponseEntity<GetUserResponseDto> getCurrentUserProfile() {
       return ResponseEntity.ok(userService.getUser());
+    }
+
+    @PatchMapping("/update/dp")
+    public ResponseEntity<Void> updateDp(@Valid @RequestBody UpdateProfilePictureRequestDto request) {
+        userService.updateDp(request.getProfileUrl());
+        return ResponseEntity.ok().build();
+    }
+
+    @ExceptionHandler(ProfilePictureUploadException.class)
+    public ResponseEntity<Map<String, String>> handleProfilePictureUploadException() {
+        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(
+                Map.of("error", "Error uploading profile picture")
+        );
     }
 }
