@@ -90,11 +90,15 @@ public class UserService {
         userRepository.addFavourite(authService.getCurrentUser().getId(), submissionId);
     }
 
-    public List<SubmissionResponseDto> getFavouriteSubmissions() {
+    public List<SubmissionCardResponseDto> getFavouriteSubmissions() {
         User user = authService.getCurrentUser();
         List<Submission> favouriteSubmissions = submissionRepository.findFavouriteSubmissions(user.getId());
         return favouriteSubmissions.stream()
-                .map(submissionService::toSubmissionResponseDto)
+                .map(submission -> submissionService.submissionToSubmissionCardResponseDto(
+                        submission,
+                        submissionRepository.findFavouriteSubmissionIds(user.getId()
+                        )
+                ))
                 .toList();
     }
 
