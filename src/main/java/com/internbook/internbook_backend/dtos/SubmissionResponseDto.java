@@ -41,4 +41,5 @@ public class SubmissionResponseDto {
     private Boolean isFraud;
     private Boolean isOffensive;
     private Integer likeCount;
+    private Boolean favourite;
 }

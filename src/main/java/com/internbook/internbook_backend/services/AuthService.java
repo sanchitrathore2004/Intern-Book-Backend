@@ -177,6 +177,13 @@ public class AuthService {
         return user;
     }
 
+    public Long getCurrentUserId() {
+        var authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        return ((Number) principal).longValue();
+    }
+
     public ResponseEntity<JwtResponseDto> updateProfile(User user, HttpServletResponse response) {
         var userDto = userMapper.toDto(user);
         var jwtAccessToken = jwtService.generateAccessToken(userDto);

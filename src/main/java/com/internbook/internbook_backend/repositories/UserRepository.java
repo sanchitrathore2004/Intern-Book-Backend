@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,7 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Query(value = "DELETE FROM favourites WHERE user_id = :userId AND submission_id = :subId", nativeQuery = true)
-    void removeFavourite(@Param("userId") Long userId, @Param("subId") Integer subId);
+    int removeFavourite(@Param("userId") Long userId, @Param("subId") Integer subId);
 
     @Query("""
         select count(s)
