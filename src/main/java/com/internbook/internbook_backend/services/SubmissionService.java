@@ -135,6 +135,10 @@ public class SubmissionService {
         dto.setCompany(companyMapper.toDto(sub.getCompany()));
         dto.setRole(roleMapper.toDto(sub.getRole()));
         dto.setProcessStructure(processStructureMapper.toDto(sub.getProcessStructure()));
+        var currentUser = authService.getCurrentUser();
+        dto.setFavourite(
+                currentUser.getFavouriteSubmissions().contains(sub)
+        );
 
         return dto;
     }

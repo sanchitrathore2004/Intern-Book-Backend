@@ -25,7 +25,6 @@ public class UserService {
     private final SubmissionService submissionService;
     private final UserRepository userRepository;
     private final CompanyMapper companyMapper;
-    private final UserMapper userMapper;
 
     public UserProfileResponseDto getProfileById(Long userId) {
         var user = userRepository.findById(userId).orElse(null);
@@ -64,19 +63,27 @@ public class UserService {
 
     @Transactional
     public ToggleResponseDto toggleFavourites(Integer submissionId) {
-        Long userId = authService.getCurrentUser().getId();
+        Long userId = authService.getCurrentUserId();
         var response = new ToggleResponseDto();
 
-        boolean exists = userRepository.isFavourite(userId, submissionId);
+        int deleted = userRepository.removeFavourite(userId, submissionId);
 
-        if (exists) {
-            userRepository.removeFavourite(userId, submissionId);
+        if (deleted > 0) {
             response.setFavourite(false);
         } else {
             userRepository.addFavourite(userId, submissionId);
             response.setFavourite(true);
         }
 
+        response.setFavouritesCount((int) userRepository.countFavouritesByUserId(userId));
+        response.setSubmissionsCount(submissionRepository.countByUserId(userId));
+
+        response.setFavourites(
+                userRepository.findTop3Favourites(
+                        userId,
+                        PageRequest.of(0, 3)
+                )
+        );
         return response;
     }
 
