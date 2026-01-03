@@ -55,10 +55,10 @@ public class SaveSubmissionRequestDto {
     private BigDecimal stipendValue;
 
 //    process_structure table values
-    @Positive(message = "Ot-rounds cannot be negative")
+    @PositiveOrZero(message = "Ot-rounds cannot be negative")
     private Integer otRounds;
 
-    @Positive(message = "Pi-rounds cannot be negative")
+    @PositiveOrZero(message = "Pi-rounds cannot be negative")
     private Integer piRounds;
 
     @PastOrPresent(message = "Start date cannot be in the future")
