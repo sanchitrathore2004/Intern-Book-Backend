@@ -15,6 +15,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.*;
@@ -50,12 +51,12 @@ public class SubmissionService {
         submission.setRole(role);
         submission.setCompany(company);
 
-        if (request.getStipendValue() != null) {
+        if (request.getStipendValue() != null && request.getType()!=SubmissionType.PLACED) {
             var stipend = new Stipend(user, company, request.getStipendValue(), submission);
             submission.setStipend(stipend);
         }
 
-        if (request.getCtc() != null) {
+        if (request.getCtc() != null && request.getType()!=SubmissionType.INTERN) {
             var ctcValue = new CtcValue(user, company, request.getCtc(), submission);
             if (request.getBasePay() != null)
                 ctcValue.setBasePay(request.getBasePay());
@@ -109,12 +110,20 @@ public class SubmissionService {
         dto.setExperience(sub.getExperience());
         dto.setCreatedAt(sub.getCreatedAt());
         dto.setType(sub.getType());
+        dto.setMistakes(sub.getMistakes());
+        dto.setResources(sub.getResources());
+        dto.setClubPositions(sub.getClubPositions());
+        dto.setIsFraud(sub.getIsFraud());
+        dto.setIsOffensive(sub.getIsOffensive());
+        dto.setLikeCount(sub.getLikeCount());
 
         var user = sub.getUser();
         dto.setAuthorId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setProfileUrl(user.getProfileUrl());
+        dto.setYear(user.getYear());
+        dto.setDegree(user.getDegree());
 
         if (user.getDepartment() != null) {
             var deptDto = new DepartmentResponseDto();
@@ -230,16 +239,18 @@ public class SubmissionService {
                         entry(submission.getBenefits(), "Benefits"),
                         entry(submission.getResources(), "Resources")
                 )
-                .filter(e -> e.getKey() != null && !(e.getKey() instanceof Collection<?> c && c.isEmpty()))
+                .filter(e -> e.getKey() != "" && !(e.getKey() instanceof Collection<?> c && c.isEmpty()))
                 .map(Map.Entry::getValue)
                 .toList();
     }
 
     private Map.Entry<Object, String> entry(Object value, String tag) {
-        if(value == null)
+        if (value == null) {
             value = "";
+        }
         return Map.entry(value, tag);
     }
+
 
     public void deleteSubmission(Integer submissionId) {
         Submission submission = validateUserSubmission(submissionId);
