@@ -68,17 +68,20 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
 
     int countByUserId(Long userId);
 
+    @Modifying
+    @Query("""
+    UPDATE Submission s
+    SET s.likeCount = s.likeCount + 1
+     WHERE s.id = :submissionId
+    """)
+    int incrementLike(@Param("submissionId") Integer submissionId);
 
     @Modifying
-    @Query("UPDATE Submission s SET s.likeCount = s.likeCount + 1 WHERE s.id = :id")
-    void incrementLikeCount(@Param("id") Integer id);
-
-   @Modifying
     @Query("""
-       UPDATE Submission s
-       SET s.likeCount = s.likeCount - 1
-       WHERE s.id = :id AND s.likeCount > 0
-       """)
-    void decrementLikeCount(@Param("id") Integer id);
+    UPDATE Submission s
+    SET s.likeCount = s.likeCount - 1
+    WHERE s.id = :submissionId AND s.likeCount > 0
+    """)
+    int decrementLike(@Param("submissionId") Integer submissionId);
 
 }
