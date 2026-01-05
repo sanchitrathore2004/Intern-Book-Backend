@@ -226,6 +226,7 @@ public class SubmissionService {
         submissionCardResponseDto.setFavourite(
                 favouriteSubmissionIds.contains(submission.getId())
         );
+        submissionCardResponseDto.setLikeCount(submission.getLikeCount());
         return submissionCardResponseDto;
     }
 

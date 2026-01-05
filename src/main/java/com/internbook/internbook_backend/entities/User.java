@@ -64,14 +64,6 @@ public class User {
     )
     private Set<Submission> favouriteSubmissions = new LinkedHashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "likes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "submission_id")
-    )
-    private Set<Submission> likedSubmissions = new LinkedHashSet<>();
-
     @OneToMany(mappedBy = "user")
     private Set<Report> reports = new LinkedHashSet<>();
 

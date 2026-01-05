@@ -21,4 +21,5 @@ public class SubmissionCardResponseDto {
     private List<String> tags;
     private String companyLogoUrl;
     private boolean isFavourite;
+    private Integer likeCount;
 }

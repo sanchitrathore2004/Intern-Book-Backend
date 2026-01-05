@@ -74,9 +74,6 @@ public class Submission {
     @ManyToMany(mappedBy = "favouriteSubmissions")
     private Set<User> favouriteBy = new LinkedHashSet<>();
 
-    @ManyToMany(mappedBy = "likedSubmissions")
-    private Set<User> likedBy = new LinkedHashSet<>();
-
     @OneToOne(mappedBy = "submissions", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private ProcessStructure processStructure;
 

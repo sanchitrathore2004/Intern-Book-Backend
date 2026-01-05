@@ -91,11 +91,13 @@ public class UserService {
     @Transactional
     public void deleteFromFavourite(Integer submissionId) {
         userRepository.removeFavourite(authService.getCurrentUser().getId(), submissionId);
+        submissionRepository.decrementLikeCount(submissionId);
     }
 
     @Transactional
     public void addToFavourite(Integer submissionId) {
         userRepository.addFavourite(authService.getCurrentUser().getId(), submissionId);
+        submissionRepository.incrementLikeCount(submissionId);
     }
 
     public List<SubmissionCardResponseDto> getFavouriteSubmissions() {
