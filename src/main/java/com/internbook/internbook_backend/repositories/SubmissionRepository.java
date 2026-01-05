@@ -3,6 +3,7 @@ package com.internbook.internbook_backend.repositories;
 import com.internbook.internbook_backend.entities.Submission;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -66,4 +67,18 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     );
 
     int countByUserId(Long userId);
+
+
+    @Modifying
+    @Query("UPDATE Submission s SET s.likeCount = s.likeCount + 1 WHERE s.id = :id")
+    void incrementLikeCount(@Param("id") Integer id);
+
+   @Modifying
+    @Query("""
+       UPDATE Submission s
+       SET s.likeCount = s.likeCount - 1
+       WHERE s.id = :id AND s.likeCount > 0
+       """)
+    void decrementLikeCount(@Param("id") Integer id);
+
 }
