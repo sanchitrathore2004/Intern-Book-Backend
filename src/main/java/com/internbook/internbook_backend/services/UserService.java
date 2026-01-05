@@ -70,9 +70,11 @@ public class UserService {
         int deleted = userRepository.removeFavourite(userId, submissionId);
 
         if (deleted > 0) {
+            submissionRepository.decrementLike(submissionId);
             response.setFavourite(false);
         } else {
             userRepository.addFavourite(userId, submissionId);
+            submissionRepository.incrementLike(submissionId);
             response.setFavourite(true);
         }
 
@@ -86,18 +88,6 @@ public class UserService {
                 )
         );
         return response;
-    }
-
-    @Transactional
-    public void deleteFromFavourite(Integer submissionId) {
-        userRepository.removeFavourite(authService.getCurrentUser().getId(), submissionId);
-        submissionRepository.decrementLikeCount(submissionId);
-    }
-
-    @Transactional
-    public void addToFavourite(Integer submissionId) {
-        userRepository.addFavourite(authService.getCurrentUser().getId(), submissionId);
-        submissionRepository.incrementLikeCount(submissionId);
     }
 
     public List<SubmissionCardResponseDto> getFavouriteSubmissions() {

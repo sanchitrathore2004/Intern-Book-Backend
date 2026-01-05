@@ -37,26 +37,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/addToFavourites/{submission_id}")
-    private ResponseEntity<?> addToFavourites(
-            @NotNull(message = "Submission Id should not be null")
-            @PathVariable(name = "submission_id")
-            Integer submissionId
-    ){
-        userService.addToFavourite(submissionId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/removeFromFavourites/{submission_id}")
-    private ResponseEntity<?> removeFromFavourites(
-            @NotNull(message = "Submission Id should not be null")
-            @PathVariable(name = "submission_id")
-            Integer submissionId
-    ){
-        userService.deleteFromFavourite(submissionId);
-        return  ResponseEntity.ok().build();
-    }
-
     @GetMapping("/profile/{user_id}")
     private ResponseEntity<UserProfileResponseDto> getProfileById(
             @PathVariable(name = "user_id") Long userId
