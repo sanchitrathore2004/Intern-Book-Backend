@@ -14,10 +14,10 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
     @Query("""
     SELECT
         c.id as companyId,
-        AVG(cv.ctc) as avgCtc,
-        AVG(cv.basePay) as avgBasePay,
-        AVG(s.stipend) as avgStipend,
-        COUNT(u.id) as favouriteCount
+        AVG(DISTINCT cv.ctc) as avgCtc,
+        AVG(DISTINCT cv.basePay) as avgBasePay,
+        AVG(DISTINCT s.stipend) as avgStipend,
+        COUNT(DISTINCT u.id) as favouriteCount
     FROM Company c
     LEFT JOIN c.ctcValues cv
     LEFT JOIN c.stipends s
