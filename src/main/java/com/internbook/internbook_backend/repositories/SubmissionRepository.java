@@ -42,8 +42,19 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
             "LEFT JOIN FETCH s.processStructure ps " +
             "LEFT JOIN FETCH s.ctcValue cv " +
             "LEFT JOIN FETCH s.stipend st " +
-            "WHERE s.id = :userId")
-    Optional<Submission> findWithAllDetails(@Param("userId") Integer userId);
+            "WHERE s.id = :submissionId")
+    Optional<Submission> findWithAllDetails(@Param("submissionId") Integer submissionId);
+
+    @Query("SELECT s FROM Submission s " +
+            "JOIN FETCH s.user u " +
+            "JOIN FETCH u.department d " +
+            "JOIN FETCH s.role r " +
+            "JOIN FETCH s.company c " +
+            "LEFT JOIN FETCH s.processStructure ps " +
+            "LEFT JOIN FETCH s.ctcValue cv " +
+            "LEFT JOIN FETCH s.stipend st ")
+    List<Submission> findAllWithDetails();
+
     @Query("""
     SELECT DISTINCT s
     FROM Submission s

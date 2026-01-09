@@ -1,9 +1,8 @@
 package com.internbook.internbook_backend.controllers;
 
 import com.internbook.internbook_backend.dtos.*;
-import com.internbook.internbook_backend.repositories.SubmissionRepository;
-import com.internbook.internbook_backend.services.AuthService;
 import com.internbook.internbook_backend.services.SubmissionService;
+import com.internbook.internbook_backend.services.TrieService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,8 +17,7 @@ import java.util.List;
 @RequestMapping("/submission")
 public class SubmissionController {
     private final SubmissionService submissionService;
-    private final SubmissionRepository submissionRepository;
-    private final AuthService authService;
+    private final TrieService trieService;
 
     @PostMapping
     public ResponseEntity<SubmissionResponseDto> saveSubmission(
@@ -55,7 +53,6 @@ public class SubmissionController {
         return ResponseEntity.ok(submissionService.getSubmissionById(submissionId));
     }
 
-    @SuppressWarnings("JvmTaintAnalysis")
     @PutMapping("/{submission_id}")
     public ResponseEntity<?> editSubmission(
             @NotNull(message = "Submission Id should be not null")
@@ -81,5 +78,12 @@ public class SubmissionController {
     public ResponseEntity<List<SubmissionCardResponseDto>> getTopSubmissions() {
         List<SubmissionCardResponseDto> response = submissionService.getTopSubmission();
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/autocomplete")
+    public ResponseEntity<List<AutoCompleteResponseDto>> getAutoComplete(
+            @Valid @RequestBody AutocompleteRequestDto request
+    ) {
+        return ResponseEntity.ok().body(trieService.searchMetaData(request.query));
     }
 }

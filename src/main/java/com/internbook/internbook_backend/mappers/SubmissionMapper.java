@@ -1,6 +1,8 @@
 package com.internbook.internbook_backend.mappers;
 
 import com.internbook.internbook_backend.dtos.SaveSubmissionRequestDto;
+import com.internbook.internbook_backend.dtos.SubmissionResponseDto;
+import com.internbook.internbook_backend.dtos.TrieSubmissionDto;
 import com.internbook.internbook_backend.dtos.temporary.SaveSubmissionsRequestDto;
 import com.internbook.internbook_backend.entities.Submission;
 import org.mapstruct.Mapper;
@@ -16,4 +18,6 @@ public interface SubmissionMapper {
     Submission toEntity(SaveSubmissionRequestDto request);
 
     Submission toEntity(SaveSubmissionsRequestDto request);
+
+    SubmissionResponseDto toDto(TrieSubmissionDto dto);
 }
