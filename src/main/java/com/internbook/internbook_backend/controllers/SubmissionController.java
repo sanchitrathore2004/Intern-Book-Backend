@@ -53,6 +53,13 @@ public class SubmissionController {
         return ResponseEntity.ok(submissionService.getSubmissionById(submissionId));
     }
 
+    @PostMapping("/fetchAll")
+    public ResponseEntity<List<SubmissionCardResponseDto>> getAllSubmissions(
+            @Valid @RequestBody GetAllSubmissionsRequestDto request
+    ) {
+        return ResponseEntity.ok().body(submissionService.getAllSubmissions(request.getSubmissionIds()));
+    }
+
     @PutMapping("/{submission_id}")
     public ResponseEntity<?> editSubmission(
             @NotNull(message = "Submission Id should be not null")

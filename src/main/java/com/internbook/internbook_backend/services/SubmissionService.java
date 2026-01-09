@@ -18,11 +18,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -215,61 +213,17 @@ public class SubmissionService {
     }
 
     public List<SubmissionCardResponseDto> generateSubmissionCardResponseDtos(Company company) {
-        Set<Integer> favouriteSubmissionIds =
+        Set<Integer> favouriteIds =
                 submissionRepository.findFavouriteSubmissionIds(
-                        authService.getCurrentUser().getId()
+                        authService.getCurrentUserId()
                 );
-        return company.getSubmissions()
-                .stream()
-                .map(submission -> submissionToSubmissionCardResponseDto(
-                        submission,
-                        favouriteSubmissionIds
-                ))
+
+        var rows = submissionRepository.findAllSubmissionsOfCompany(company.getId());
+
+        return rows.stream()
+                .map(row -> projectionToCardDto(row, favouriteIds))
                 .toList();
     }
-
-    public SubmissionCardResponseDto submissionToSubmissionCardResponseDto(
-            Submission submission,
-            Set<Integer> favouriteSubmissionIds
-    ) {
-        SubmissionCardResponseDto submissionCardResponseDto = new SubmissionCardResponseDto();
-        submissionCardResponseDto.setId(submission.getId());
-        submissionCardResponseDto.setCompanyName(submission.getCompany().getName());
-        submissionCardResponseDto.setUserName(submission.getUser().getName());
-        submissionCardResponseDto.setSubmissionType(submission.getType());
-        submissionCardResponseDto.setRole(submission.getRole().getName());
-        submissionCardResponseDto.setYear(submission.getUser().getYear());
-        submissionCardResponseDto.setCompanyLogoUrl(submission.getCompany().getLogoUrl());
-        submissionCardResponseDto.setTags(generateTags(submission));
-        submissionCardResponseDto.setFavourite(
-                favouriteSubmissionIds.contains(submission.getId())
-        );
-        submissionCardResponseDto.setLikeCount(submission.getFavouriteBy().size());
-        return submissionCardResponseDto;
-    }
-
-    public List<String> generateTags(Submission submission) {
-        return Stream.of(
-                        entry(submission.getCtcValue(), "CTC"),
-                        entry(submission.getStipend(), "Stipend"),
-                        entry(submission.getProcessStructure(), "Schedule"),
-                        entry(submission.getExperience(), "Experience"),
-                        entry(submission.getMistakes(), "Mistakes"),
-                        entry(submission.getBenefits(), "Benefits"),
-                        entry(submission.getResources(), "Resources")
-                )
-                .filter(e -> e.getKey() != "" && !(e.getKey() instanceof Collection<?> c && c.isEmpty()))
-                .map(Map.Entry::getValue)
-                .toList();
-    }
-
-    private Map.Entry<Object, String> entry(Object value, String tag) {
-        if (value == null) {
-            value = "";
-        }
-        return Map.entry(value, tag);
-    }
-
 
     @Transactional
     public void deleteSubmission(Integer submissionId) {
@@ -296,29 +250,73 @@ public class SubmissionService {
         return submission;
     }
 
+    public List<SubmissionCardResponseDto> getAllSubmissions(List<Integer> submissionIds) {
+        var userId = authService.getCurrentUserId();
+
+        Set<Integer> favouriteIds =
+                submissionRepository.findFavouriteSubmissionIds(userId);
+
+        List<SubmissionCardProjection> rows =
+                submissionRepository.findAllSubmissionCards(submissionIds);
+
+        return rows.stream()
+                .map(row -> projectionToCardDto(row, favouriteIds))
+                .toList();
+    }
+
+    public SubmissionCardResponseDto projectionToCardDto(
+            SubmissionCardProjection p,
+            Set<Integer> favouriteIds
+    ) {
+        SubmissionCardResponseDto dto = new SubmissionCardResponseDto();
+
+        dto.setId(p.getId());
+        dto.setCompanyName(p.getCompanyName());
+        dto.setCompanyLogoUrl(p.getCompanyLogoUrl());
+        dto.setRole(p.getRoleName());
+        dto.setUserName(p.getUserName());
+        dto.setYear(p.getUserYear());
+        dto.setSubmissionType(p.getSubmissionType());
+        dto.setLikeCount(p.getLikeCount());
+        dto.setFavourite(favouriteIds.contains(p.getId()));
+
+        dto.setTags(buildTags(p));
+
+        return dto;
+    }
+
+    private List<String> buildTags(SubmissionCardProjection p) {
+        List<String> tags = new ArrayList<>();
+
+        if (p.getHasCtc()) tags.add("CTC");
+        if (p.getHasStipend()) tags.add("Stipend");
+        if (p.getHasProcessStructure()) tags.add("Schedule");
+        if (p.getHasExperience()) tags.add("Experience");
+        if (p.getHasMistakes()) tags.add("Mistakes");
+        if (p.getHasBenefits()) tags.add("Benefits");
+        if (p.getHasResources()) tags.add("Resources");
+
+        return tags;
+    }
+
     public List<SubmissionCardResponseDto> getTopSubmission () {
         var user = authService.getCurrentUser();
         Integer companyId = user.getFavouriteCompany() != null
                 ? user.getFavouriteCompany().getId()
                 : null;
-        List<Submission> submissions =
+
+        List<SubmissionCardProjection> rows =
                 submissionRepository.findTopSubmissions(
                         user.getDepartment().getId(),
                         companyId
                 );
-        Set<Integer> favouriteSubmissionIds =
+
+        Set<Integer> favouriteIds =
                 submissionRepository.findFavouriteSubmissionIds(user.getId());
-        List<SubmissionCardResponseDto> response =
-                submissions.stream()
-                        .limit(10)
-                        .map(submission ->
-                                submissionToSubmissionCardResponseDto(
-                                        submission,
-                                        favouriteSubmissionIds
-                                )
-                        )
-                        .toList();
-        return response;
+
+        return rows.stream()
+                .map(row -> projectionToCardDto(row, favouriteIds))
+                .toList();
     }
 
     //  BULK UPLOAD ROUTES - DELETE BEFORE PUSHING TO PROD
