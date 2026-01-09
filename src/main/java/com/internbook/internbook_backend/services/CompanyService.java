@@ -24,6 +24,7 @@ public class CompanyService {
         var company = companyRepository
                 .findCompanyWithSubmissions(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
+
         List<SubmissionCardResponseDto> submissionCardResponseDtos = submissionService.generateSubmissionCardResponseDtos(company);
         CompanyStatisticsProjection statisticsProjection = companyRepository.getCompanyStatistics(companyId);
         return convertToDto(company, statisticsProjection, submissionCardResponseDtos);

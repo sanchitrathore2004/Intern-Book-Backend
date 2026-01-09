@@ -1,10 +1,8 @@
 package com.internbook.internbook_backend.services;
 
 import com.internbook.internbook_backend.dtos.*;
-import com.internbook.internbook_backend.entities.Submission;
 import com.internbook.internbook_backend.entities.User;
 import com.internbook.internbook_backend.exceptions.ProfilePictureUploadException;
-import com.internbook.internbook_backend.mappers.UserMapper;
 import com.internbook.internbook_backend.mappers.CompanyMapper;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
@@ -14,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -32,19 +29,15 @@ public class UserService {
         if(user == null)
             throw new UsernameNotFoundException("User not found");
 
-        var submissions = submissionRepository.findAllByUserId(user.getId());
+        var rows = submissionRepository.findAllByUserId(user.getId());
 
-        Set<Integer> favouriteSubmissionIds =
+        Set<Integer> favouriteIds =
                 submissionRepository.findFavouriteSubmissionIds(user.getId());
 
         List<SubmissionCardResponseDto> mySubmissions =
-                submissions.stream()
-                        .map(submission ->
-                                submissionService.submissionToSubmissionCardResponseDto(
-                                        submission,
-                                        favouriteSubmissionIds
-                                )
-                        )
+                rows.stream()
+                        .map(row ->
+                                submissionService.projectionToCardDto(row, favouriteIds))
                         .toList();
 
         var profileDto = new UserProfileResponseDto(user);
@@ -91,14 +84,17 @@ public class UserService {
     }
 
     public List<SubmissionCardResponseDto> getFavouriteSubmissions() {
-        User user = authService.getCurrentUser();
-        List<Submission> favouriteSubmissions = submissionRepository.findFavouriteSubmissions(user.getId());
-        return favouriteSubmissions.stream()
-                .map(submission -> submissionService.submissionToSubmissionCardResponseDto(
-                        submission,
-                        submissionRepository.findFavouriteSubmissionIds(user.getId()
-                        )
-                ))
+
+        var userId = authService.getCurrentUserId();
+
+        Set<Integer> favouriteIds =
+                submissionRepository.findFavouriteSubmissionIds(userId);
+
+        List<SubmissionCardProjection> rows =
+                submissionRepository.findFavouriteSubmissions(userId);
+
+        return rows.stream()
+                .map(row -> submissionService.projectionToCardDto(row, favouriteIds))
                 .toList();
     }
 
@@ -127,7 +123,7 @@ public class UserService {
         return dto;
     }
 
-    public Void updateDp (String profileUrl) {
+    public void updateDp (String profileUrl) {
         try {
             var user = authService.getCurrentUser();
             user.setProfileUrl(profileUrl);
@@ -135,7 +131,6 @@ public class UserService {
         } catch (Exception e) {
             throw new ProfilePictureUploadException();
         }
-        return null;
     }
 }
 

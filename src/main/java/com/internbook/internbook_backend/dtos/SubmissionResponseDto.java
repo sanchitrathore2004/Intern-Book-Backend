@@ -22,6 +22,7 @@ public class SubmissionResponseDto {
     private Integer year;
     private Degree degree;
     private String profileUrl;
+    private Boolean isAnonymous;
 
     private CompanyResponseDto company;
     private RoleResponseDto role;
