@@ -3,16 +3,16 @@ package com.internbook.internbook_backend.controllers;
 import com.internbook.internbook_backend.dtos.ChangeDreamCompanyResponseDto;
 import com.internbook.internbook_backend.dtos.CompanyPageResponseDto;
 import com.internbook.internbook_backend.dtos.CompanyResponseDto;
-import com.internbook.internbook_backend.dtos.RoleResponseDto;
+import com.internbook.internbook_backend.dtos.DomainResponseDto;
 import com.internbook.internbook_backend.entities.Company;
-import com.internbook.internbook_backend.entities.Role;
+import com.internbook.internbook_backend.entities.Domain;
 import com.internbook.internbook_backend.exceptions.CompanyNotFoundException;
 import com.internbook.internbook_backend.mappers.CompanyMapper;
-import com.internbook.internbook_backend.mappers.RoleMapper;
+import com.internbook.internbook_backend.mappers.DomainMapper;
 import com.internbook.internbook_backend.repositories.CompanyRepository;
+import com.internbook.internbook_backend.repositories.DomainRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import com.internbook.internbook_backend.services.AuthService;
-import com.internbook.internbook_backend.repositories.RoleRepository;
 import com.internbook.internbook_backend.services.CompanyService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -32,8 +32,8 @@ public class CompanyController {
     private final AuthService authService;
     private final UserRepository userRepository;
     private final CompanyMapper companyMapper;
-    private final RoleRepository roleRepository;
-    private final RoleMapper roleMapper;
+    private final DomainRepository domainRepository;
+    private final DomainMapper domainMapper;
 
     @GetMapping("/{companyId}")
     public ResponseEntity<CompanyPageResponseDto> getCompany(@PathVariable(name = "companyId")Integer companyId) {
@@ -49,11 +49,11 @@ public class CompanyController {
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/roles")
-    public ResponseEntity<List<RoleResponseDto>> getAllRoles() {
-        List<Role> roles = roleRepository.findAll();
-        List<RoleResponseDto> res= roles.stream()
-                .map(roleMapper::toDto).toList();
+    @GetMapping("/domains")
+    public ResponseEntity<List<DomainResponseDto>> getAllRoles() {
+        List<Domain> domains = domainRepository.findAll();
+        List<DomainResponseDto> res= domains.stream()
+                .map(domainMapper::toDto).toList();
         return ResponseEntity.ok(res);
     }
 

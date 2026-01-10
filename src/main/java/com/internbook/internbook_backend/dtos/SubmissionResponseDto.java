@@ -25,7 +25,7 @@ public class SubmissionResponseDto {
     private Boolean isAnonymous;
 
     private CompanyResponseDto company;
-    private RoleResponseDto role;
+    private DomainResponseDto domain;
     private SubmissionType type;
     private CTCResponseDto ctc;
     private ProcessStructureResponseDto processStructure;

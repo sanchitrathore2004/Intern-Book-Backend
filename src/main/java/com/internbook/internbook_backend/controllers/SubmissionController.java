@@ -37,14 +37,6 @@ public class SubmissionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/role")
-    public ResponseEntity<RoleResponseDto> saveRole(
-            @Valid @RequestBody SaveRoleRequestDto request
-    ) {
-        var response =  submissionService.saveRole(request);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 
     @GetMapping("/{submission_id}")
     public ResponseEntity<SubmissionResponseDto> getSubmissionById(

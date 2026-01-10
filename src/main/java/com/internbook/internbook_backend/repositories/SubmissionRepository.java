@@ -38,7 +38,7 @@ SELECT
 
 FROM Submission s
 JOIN s.company c
-JOIN s.role r
+JOIN s.domain r
 JOIN s.user u
 
 JOIN s.favouriteBy favUser
@@ -78,7 +78,7 @@ SELECT
 
 FROM Submission s
 JOIN s.company c
-JOIN s.role r
+JOIN s.domain r
 JOIN s.user u
 LEFT JOIN s.favouriteBy fb
 LEFT JOIN s.ctcValue cv
@@ -102,7 +102,7 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("SELECT s FROM Submission s " +
             "JOIN FETCH s.user u " +
             "JOIN FETCH u.department d " +
-            "JOIN FETCH s.role r " +
+            "JOIN FETCH s.domain r " +
             "JOIN FETCH s.company c " +
             "LEFT JOIN FETCH s.processStructure ps " +
             "LEFT JOIN FETCH s.ctcValue cv " +
@@ -113,7 +113,7 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("SELECT s FROM Submission s " +
             "JOIN FETCH s.user u " +
             "JOIN FETCH u.department d " +
-            "JOIN FETCH s.role r " +
+            "JOIN FETCH s.domain r " +
             "JOIN FETCH s.company c " +
             "LEFT JOIN FETCH s.processStructure ps " +
             "LEFT JOIN FETCH s.ctcValue cv " +
@@ -125,7 +125,7 @@ SELECT
     s.id AS id,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
-    r.name AS roleName,
+    r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
@@ -143,7 +143,7 @@ SELECT
 
 FROM Submission s
 JOIN s.company c
-JOIN s.role r
+JOIN s.domain r
 JOIN s.user u
 LEFT JOIN s.favouriteBy fb
 LEFT JOIN s.ctcValue cv
@@ -188,7 +188,7 @@ SELECT
 
 FROM Submission s
 JOIN s.company c
-JOIN s.role r
+JOIN s.domain r
 JOIN s.user u
 LEFT JOIN s.favouriteBy fb
 LEFT JOIN s.ctcValue cv
@@ -226,7 +226,7 @@ SELECT
 
 FROM Submission s
 JOIN s.company c
-JOIN s.role r
+JOIN s.domain r
 JOIN s.user u
 LEFT JOIN s.favouriteBy fb
 LEFT JOIN s.ctcValue cv

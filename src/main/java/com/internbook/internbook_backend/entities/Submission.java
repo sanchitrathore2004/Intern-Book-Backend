@@ -29,15 +29,15 @@ public class Submission {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private Role role;
-
+    
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private SubmissionType type;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "domain_id")
+    private Domain domain;
+    
     @Column(name = "benefits")
     private String benefits;
 
@@ -49,6 +49,9 @@ public class Submission {
 
     @Column(name = "resources")
     private String resources;
+    
+    @Column(name ="domainDescription")
+    private String domainDescription;
 
     @Column(name = "cgpa")
     private BigDecimal cgpa;
@@ -85,7 +88,7 @@ public class Submission {
 
     @OneToOne (mappedBy = "submission", cascade =  CascadeType.ALL, orphanRemoval = true)
     private CtcValue ctcValue;
-
+    
     public void updateStipend(BigDecimal stipendValue) {
         if(stipendValue == null){
             removeStipend();

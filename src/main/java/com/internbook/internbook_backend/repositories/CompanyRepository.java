@@ -32,7 +32,7 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
     LEFT JOIN FETCH c.submissions s
     LEFT JOIN FETCH s.user u
     LEFT JOIN FETCH u.department
-    LEFT JOIN FETCH s.role
+    LEFT JOIN FETCH s.domain
     LEFT JOIN FETCH s.ctcValue
     LEFT JOIN FETCH s.stipend
     LEFT JOIN FETCH s.processStructure

@@ -9,29 +9,23 @@ import java.time.LocalDate;
 
 @Data
 public class SaveSubmissionRequestDto {
-//    @Positive
-//    private Integer id;
-
     @NotNull(message = "Company ID is required")
     @Positive
     private Integer companyId;
 
-    @NotNull(message = "Role ID is required")
+    @NotNull(message = "Domain ID is required")
     @Positive
-    private Integer roleId;
+    private Integer domainId;
 
     @NotNull(message = "Submission type is required and it must be (INTERN, PLACED or INTER_TO_PPO)")
     private SubmissionType type;
 
-    @Size(max = 2000, message = "Benefits description is too long")
-    private String benefits;
+    @Size(max = 100, message = "Domain description is too long")
+    private String domainDescription;
 
     @NotBlank(message = "Experience cannot be empty")
     @Size(min = 50, max = 20000, message = "Experience should be between 50 and 20,000 characters")
     private String experience;
-
-    @Size(max = 5000)
-    private String mistakes;
 
     @Size(max = 2000)
     private String resources;

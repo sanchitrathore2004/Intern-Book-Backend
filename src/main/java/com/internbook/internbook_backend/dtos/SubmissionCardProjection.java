@@ -6,7 +6,7 @@ public interface SubmissionCardProjection {
     Integer getId();
     String getCompanyName();
     String getCompanyLogoUrl();
-    String getRoleName();
+    String getDomainName();
     String getUserName();
     Integer getUserYear();
     SubmissionType getSubmissionType();

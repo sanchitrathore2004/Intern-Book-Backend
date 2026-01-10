@@ -1,6 +1,5 @@
 package com.internbook.internbook_backend.dtos;
 
-import com.internbook.internbook_backend.entities.Role;
 import com.internbook.internbook_backend.enums.SubmissionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +15,7 @@ public class SubmissionCardResponseDto {
     private String companyName;
     private String userName;
     private SubmissionType submissionType;
-    private String role;
+    private String domainName;
     private Integer year;
     private List<String> tags;
     private String companyLogoUrl;

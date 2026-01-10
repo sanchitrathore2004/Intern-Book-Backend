@@ -30,10 +30,10 @@ public class PopulateDbController {
     }
     @PostMapping("/roles")
     public ResponseEntity<String> addRoles(
-            @RequestBody ArrayList<SaveRoleRequestDto> request
+            @RequestBody ArrayList<SaveDomainRequestDto> request
             ) {
         request.forEach(submissionService::saveRole);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Roles saved successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Domains saved successfully");
     }
 
     @PostMapping("/companies")

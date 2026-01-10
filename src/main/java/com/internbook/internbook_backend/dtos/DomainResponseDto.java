@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RoleResponseDto {
+public class DomainResponseDto {
     private Integer id;
-    private String name;
-    private String description;
+    private String domainName;
 }

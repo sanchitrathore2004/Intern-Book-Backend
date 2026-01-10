@@ -142,7 +142,7 @@ public class TrieService {
         Set<String> phrases = new HashSet<>();
 
         var company = submission.getCompany();
-        var role =  submission.getRole();
+        var domain =  submission.getDomain();
 
         //  add phrases as per need eg: stipend, ctc, domain, etc
         if(company != null) {
@@ -152,15 +152,15 @@ public class TrieService {
                             phrases.add(normalize(name)));
         }
 
-        if(role != null) {
-            Arrays.stream(role.getName()
+        if(domain != null) {
+            Arrays.stream(domain.getDomainName()
                     .split(" "))
                     .forEach(name ->
                             phrases.add(normalize(name)));
         }
 
-        if(company != null && role != null) {
-            phrases.add(normalize(company.getName() + " " + role.getName()));
+        if(company != null && domain != null) {
+            phrases.add(normalize(company.getName() + " " + domain.getDomainName()));
         }
 
         if(submission.getAuthorId() != null && !submission.getIsAnonymous()) {
