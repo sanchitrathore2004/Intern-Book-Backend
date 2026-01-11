@@ -50,7 +50,7 @@ public class CompanyController {
     }
 
     @GetMapping("/domains")
-    public ResponseEntity<List<DomainResponseDto>> getAllRoles() {
+    public ResponseEntity<List<DomainResponseDto>> getAllDomains() {
         List<Domain> domains = domainRepository.findAll();
         List<DomainResponseDto> res= domains.stream()
                 .map(domainMapper::toDto).toList();

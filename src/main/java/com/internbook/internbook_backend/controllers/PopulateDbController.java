@@ -32,7 +32,7 @@ public class PopulateDbController {
     public ResponseEntity<String> addRoles(
             @RequestBody ArrayList<SaveDomainRequestDto> request
             ) {
-        request.forEach(submissionService::saveRole);
+        request.forEach(submissionService::saveDomain);
         return ResponseEntity.status(HttpStatus.CREATED).body("Domains saved successfully");
     }
 

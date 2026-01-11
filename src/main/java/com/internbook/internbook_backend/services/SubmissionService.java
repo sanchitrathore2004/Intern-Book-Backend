@@ -99,7 +99,7 @@ public class SubmissionService {
         return companyMapper.toDto(company);
     }
 
-    public void saveRole(SaveDomainRequestDto request) {
+    public void saveDomain(SaveDomainRequestDto request) {
         var domain = new Domain();
         domain.setName(request.getDomainName());
         domainRepository.save(domain);

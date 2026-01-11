@@ -153,9 +153,9 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <configuration>
-                    <url>jdbc:mysql://localhost:3306/store_api</url>
+                    <url>jdbc:mysql://localhost:3306/internBook?createDatabaseIfNotExist=true</url>
                     <user>root</user>
-                    <password>Abhishek028_</password>
+                    <password>root</password>
                     <cleanDisabled>false</cleanDisabled>
                 </configuration>
             </plugin>
