@@ -28,17 +28,17 @@ public class SubmissionService {
     private final SubmissionMapper submissionMapper;
     private final ProcessStructureMapper processStructureMapper;
     private final CompanyRepository companyRepository;
-    private final RoleRepository roleRepository;
     private final SubmissionRepository submissionRepository;
     private final AuthService authService;
-
+    private final DomainMapper domainMapper;
     private final CtcMapper ctcMapper;
-    private final RoleMapper roleMapper;
+
     private final CompanyMapper companyMapper;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
 
     private final ApplicationEventPublisher eventPublisher;
+    private final DomainRepository domainRepository;
 
     @Transactional
     public SubmissionResponseDto saveSubmission(SaveSubmissionRequestDto request) {
@@ -46,13 +46,14 @@ public class SubmissionService {
         if (user == null)
             throw new UsernameNotFoundException("Username not found");
 
-        var role = roleRepository.getReferenceById(request.getRoleId());
+        var domain = domainRepository.getReferenceById(request.getDomainId());
         var company = companyRepository.getReferenceById(request.getCompanyId());
 
         var submission = submissionMapper.toEntity(request);
         submission.setUser(user);
-        submission.setRole(role);
+        submission.setDomain(domain);
         submission.setCompany(company);
+        submission.setDomainDescription(request.getDomainDescription());
 
         if (request.getStipendValue() != null && request.getType()!=SubmissionType.PLACED) {
             var stipend = new Stipend(user, company, request.getStipendValue(), submission);
@@ -98,14 +99,11 @@ public class SubmissionService {
         return companyMapper.toDto(company);
     }
 
-    public RoleResponseDto saveRole(SaveRoleRequestDto request) {
-        var role = new Role();
-        role.setName(request.getRoleName());
-        if(request.getDescription() != null)
-            role.setDescription(request.getDescription());
-
-        roleRepository.save(role);
-        return roleMapper.toDto(role);
+    public void saveDomain(SaveDomainRequestDto request) {
+        var domain = new Domain();
+        domain.setName(request.getDomainName());
+        domainRepository.save(domain);
+        domainMapper.toDto(domain);
     }
 
     public TrieSubmissionDto toTrieSubmissionDto(Submission sub) {
@@ -113,16 +111,15 @@ public class SubmissionService {
 
         dto.setId(sub.getId());
         dto.setCgpa(sub.getCgpa());
-        dto.setBenefits(sub.getBenefits());
         dto.setExperience(sub.getExperience());
         dto.setCreatedAt(sub.getCreatedAt());
         dto.setType(sub.getType());
-        dto.setMistakes(sub.getMistakes());
         dto.setResources(sub.getResources());
         dto.setClubPositions(sub.getClubPositions());
         dto.setIsFraud(sub.getIsFraud());
         dto.setIsOffensive(sub.getIsOffensive());
         dto.setLikeCount(sub.getLikeCount());
+        dto.setDomainDescription(sub.getDomainDescription());
 
         var user = sub.getUser();
         dto.setAuthorId(user.getId());
@@ -150,7 +147,7 @@ public class SubmissionService {
         }
 
         dto.setCompany(companyMapper.toDto(sub.getCompany()));
-        dto.setRole(roleMapper.toDto(sub.getRole()));
+        dto.setDomain(domainMapper.toDto(sub.getDomain()));
         dto.setProcessStructure(processStructureMapper.toDto(sub.getProcessStructure()));
 
         return dto;
@@ -184,13 +181,12 @@ public class SubmissionService {
 
         Submission submission = validateUserSubmission(submissionId);
 
-        submission.setBenefits(request.getBenefits());
         submission.setExperience(request.getExperience());
-        submission.setMistakes(request.getMistakes());
         submission.setResources(request.getResources());
         submission.setCgpa(request.getCgpa());
         submission.setClubPositions(request.getClubPositions());
-        submission.setRole(roleRepository.getReferenceById(request.getRoleId()));
+        submission.setDomain(domainRepository.getReferenceById(request.getDomainId()));
+        submission.setDomainDescription(request.getDomainDescription());
 
         boolean companyChanged = !Objects.equals(submission.getCompany().getId(), request.getCompanyId());
         boolean typeChanged = submission.getType() != request.getType();
@@ -273,7 +269,7 @@ public class SubmissionService {
         dto.setId(p.getId());
         dto.setCompanyName(p.getCompanyName());
         dto.setCompanyLogoUrl(p.getCompanyLogoUrl());
-        dto.setRole(p.getRoleName());
+        dto.setDomainName(p.getDomainName());
         dto.setUserName(p.getUserName());
         dto.setYear(p.getUserYear());
         dto.setSubmissionType(p.getSubmissionType());
@@ -344,12 +340,12 @@ public class SubmissionService {
 
     public void saveSubmissions(SaveSubmissionsRequestDto request) {
         var user = userRepository.findById(request.getUserId()).orElse(null);
-        var role = roleRepository.getReferenceById(request.getRoleId());
+        var domain = domainRepository.getReferenceById(request.getDomainId());
         var company = companyRepository.getReferenceById(request.getCompanyId());
 
         var submission = submissionMapper.toEntity(request);
         submission.setUser(user);
-        submission.setRole(role);
+        submission.setDomain(domain);
         submission.setCompany(company);
 
         if(request.getStipendValue() != null) {

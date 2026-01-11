@@ -6,14 +6,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class SaveRoleRequestDto {
+public class SaveDomainRequestDto {
     @Positive
     private Integer id;
 
-    @NotBlank(message = "role name is required")
+    @NotBlank(message = "domain name is required")
     @Size(max = 255)
-    private String roleName;
-
-    @Size(max = 5000)
-    private String description;
+    private String domainName;
 }

@@ -25,15 +25,14 @@ public class SubmissionResponseDto {
     private Boolean isAnonymous;
 
     private CompanyResponseDto company;
-    private RoleResponseDto role;
+    private DomainResponseDto domain;
     private SubmissionType type;
     private CTCResponseDto ctc;
     private ProcessStructureResponseDto processStructure;
 
     private BigDecimal stipend;
-    private String benefits;
     private String experience;
-    private String mistakes;
+    private String domainDescription;
     private String resources;
     private BigDecimal cgpa;
     private String clubPositions;

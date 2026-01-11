@@ -11,10 +11,10 @@ public class SaveSubmissionsRequestDto {
     private Integer id;
     private Long userId;
     private Integer companyId;
-    private Integer roleId;
-    private SubmissionType type;private String benefits;
+    private Integer domainId;
+    private SubmissionType type;
     private String experience;
-    private String mistakes;
+    private String domainDescription;
     private String resources;
     private BigDecimal cgpa;
     private String clubPositions;
