@@ -142,43 +142,54 @@ public class TrieService {
         Set<String> phrases = new HashSet<>();
 
         var company = submission.getCompany();
-        var domain =  submission.getDomain();
+        var domain = submission.getDomain();
 
-        //  add phrases as per need eg: stipend, ctc, domain, etc
-        if(company != null) {
-            Arrays.stream(company.getName()
-                    .split(" "))
-                    .forEach(name ->
-                            phrases.add(normalize(name)));
+        // Company name
+        if (company != null && company.getName() != null && !company.getName().isBlank()) {
+            Arrays.stream(company.getName().split("\\s+"))
+                    .map(this::normalize)
+                    .filter(s -> !s.isBlank())
+                    .forEach(phrases::add);
         }
 
-        if(domain != null) {
-            Arrays.stream(domain.getDomainName()
-                    .split(" "))
-                    .forEach(name ->
-                            phrases.add(normalize(name)));
+        // Domain name
+        if (domain != null && domain.getDomainName() != null && !domain.getDomainName().isBlank()) {
+            Arrays.stream(domain.getDomainName().split("\\s+"))
+                    .map(this::normalize)
+                    .filter(s -> !s.isBlank())
+                    .forEach(phrases::add);
         }
 
-        if(company != null && domain != null) {
-            phrases.add(normalize(company.getName() + " " + domain.getDomainName()));
-        }
+        // Company + Domain combo
+        if (company != null && domain != null &&
+                company.getName() != null &&
+                domain.getDomainName() != null) {
 
-        if(submission.getAuthorId() != null && !submission.getIsAnonymous()) {
             phrases.add(normalize(
-                    submission.getName()));
-            phrases.add(normalize(
-                    submission.getDepartment().getName()));
+                    company.getName() + " " + domain.getDomainName()
+            ));
         }
 
-        if(submission.getClubPositions() != null && !submission.getClubPositions().isEmpty()) {
-            Arrays.stream(submission.getClubPositions()
-                    .split(" "))
-                    .forEach(name ->
-                            phrases.add(normalize(name)));
+        // Author & department
+        if (submission.getAuthorId() != null && !submission.getIsAnonymous()) {
+            if (submission.getName() != null)
+                phrases.add(normalize(submission.getName()));
+
+            if (submission.getDepartment() != null && submission.getDepartment().getName() != null)
+                phrases.add(normalize(submission.getDepartment().getName()));
+        }
+
+        // Club positions
+        if (submission.getClubPositions() != null && !submission.getClubPositions().isBlank()) {
+            Arrays.stream(submission.getClubPositions().split("\\s+"))
+                    .map(this::normalize)
+                    .filter(s -> !s.isBlank())
+                    .forEach(phrases::add);
         }
 
         return phrases;
     }
+
 
     private String normalize(String text) {
         return text == null ? "" :

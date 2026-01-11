@@ -27,9 +27,8 @@ public class TrieSubmissionDto {
     private ProcessStructureResponseDto processStructure;
 
     private BigDecimal stipend;
-    private String benefits;
+    private String domainDescription;
     private String experience;
-    private String mistakes;
     private String resources;
     private BigDecimal cgpa;
     private String clubPositions;

@@ -111,16 +111,15 @@ public class SubmissionService {
 
         dto.setId(sub.getId());
         dto.setCgpa(sub.getCgpa());
-        dto.setBenefits(sub.getBenefits());
         dto.setExperience(sub.getExperience());
         dto.setCreatedAt(sub.getCreatedAt());
         dto.setType(sub.getType());
-        dto.setMistakes(sub.getMistakes());
         dto.setResources(sub.getResources());
         dto.setClubPositions(sub.getClubPositions());
         dto.setIsFraud(sub.getIsFraud());
         dto.setIsOffensive(sub.getIsOffensive());
         dto.setLikeCount(sub.getLikeCount());
+        dto.setDomainDescription(sub.getDomainDescription());
 
         var user = sub.getUser();
         dto.setAuthorId(user.getId());
