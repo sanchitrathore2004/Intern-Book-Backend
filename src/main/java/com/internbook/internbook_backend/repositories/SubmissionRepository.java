@@ -20,7 +20,7 @@ SELECT
     s.id AS id,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
-    r.name AS roleName,
+    r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
@@ -54,13 +54,12 @@ GROUP BY s.id, c.id, r.id, u.id
 """)
     List<SubmissionCardProjection> findFavouriteSubmissions(@Param("userId") Long userId);
 
-    @EntityGraph(attributePaths = {"company", "role", "processStructure", "ctcValue", "stipend", "user.department"})
     @Query("""
 SELECT
     s.id AS id,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
-    r.name AS roleName,
+    r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
@@ -170,7 +169,7 @@ SELECT
     s.id AS id,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
-    r.name AS roleName,
+    r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
@@ -208,7 +207,7 @@ SELECT
     s.id AS id,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
-    r.name AS roleName,
+    r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
