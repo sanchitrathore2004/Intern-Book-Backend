@@ -1,5 +1,6 @@
 package com.internbook.internbook_backend.services;
 
+import com.internbook.internbook_backend.common.pagination.CursorPage;
 import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.dtos.temporary.SaveDepartmentRequestDto;
 import com.internbook.internbook_backend.dtos.temporary.SaveSubmissionsRequestDto;
@@ -14,10 +15,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.*;
@@ -295,24 +299,40 @@ public class SubmissionService {
         return tags;
     }
 
-    public List<SubmissionCardResponseDto> getTopSubmission () {
+    public CursorPage<SubmissionCardResponseDto> getTopSubmission (Integer lastLikeCount,
+                                                                   LocalDateTime lastCreatedAt,
+                                                                   int limit) {
         var user = authService.getCurrentUser();
         Integer companyId = user.getFavouriteCompany() != null
                 ? user.getFavouriteCompany().getId()
                 : null;
 
+        Pageable pageable = PageRequest.of(0, limit+1);
         List<SubmissionCardProjection> rows =
-                submissionRepository.findTopSubmissions(
+                submissionRepository.findTopSubmissionsCursor(
                         user.getDepartment().getId(),
-                        companyId
+                        companyId,
+                        lastLikeCount,
+                        lastCreatedAt,
+                        pageable
                 );
+
+        boolean hasNext = rows.size() > limit;
+        if (hasNext) {
+            rows = rows.subList(0, limit);
+        }
 
         Set<Integer> favouriteIds =
                 submissionRepository.findFavouriteSubmissionIds(user.getId());
 
-        return rows.stream()
+        List<SubmissionCardResponseDto> data = rows.stream()
                 .map(row -> projectionToCardDto(row, favouriteIds))
                 .toList();
+
+        Integer nextLikeCount = hasNext ? rows.getLast().getLikeCount() : null;
+        LocalDateTime nextCreatedAt = hasNext ? rows.getLast().getCreatedDate() : null;
+
+        return new CursorPage<>(data, hasNext, nextLikeCount, nextCreatedAt);
     }
 
     //  BULK UPLOAD ROUTES - DELETE BEFORE PUSHING TO PROD

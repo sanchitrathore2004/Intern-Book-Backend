@@ -3,12 +3,13 @@ package com.internbook.internbook_backend.repositories;
 import com.internbook.internbook_backend.dtos.SubmissionCardProjection;
 import com.internbook.internbook_backend.entities.Submission;
 import com.internbook.internbook_backend.entities.User;
-import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +25,7 @@ SELECT
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
+    s.createdAt AS createdDate,
 
     COUNT(DISTINCT allFavs) AS likeCount,
 
@@ -63,6 +65,7 @@ SELECT
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
+    s.createdAt AS createdDate,
 
     COUNT(fb) AS likeCount,
 
@@ -128,9 +131,9 @@ SELECT
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
+    s.createdAt AS createdDate,
 
     COUNT(fb) AS likeCount,
-
     (COUNT(cv) > 0) AS hasCtc,
     (COUNT(st) > 0) AS hasStipend,
     (COUNT(ps) > 0) AS hasProcessStructure,
@@ -150,19 +153,27 @@ LEFT JOIN s.stipend st
 LEFT JOIN s.processStructure ps
 
 WHERE
-        u.department.id = :departmentId
-        OR (
-            :companyId IS NOT NULL
-            AND c.id = :companyId
-        )
+    (u.department.id = :departmentId
+     OR (:companyId IS NOT NULL AND c.id = :companyId))
 
 GROUP BY s.id, c.id, r.id, u.id
-ORDER BY s.likeCount DESC
+
+HAVING
+    (:lastLikeCount IS NULL OR
+     COUNT(fb) < :lastLikeCount OR
+     (COUNT(fb) = :lastLikeCount AND MIN(s.createdAt) < :lastCreatedAt))
+
+ORDER BY COUNT(fb) DESC, s.id ASC
 """)
-    List<SubmissionCardProjection> findTopSubmissions(
+    List<SubmissionCardProjection> findTopSubmissionsCursor(
             @Param("departmentId") Integer departmentId,
-            @Param("companyId") Integer companyId
+            @Param("companyId") Integer companyId,
+            @Param("lastLikeCount") Integer lastLikeCount,
+            @Param("lastCreatedAt") LocalDateTime lastCreatedAt,
+            Pageable pageable
     );
+
+
 
     @Query("""
 SELECT
@@ -211,6 +222,7 @@ SELECT
     u.name AS userName,
     u.year AS userYear,
     s.type AS submissionType,
+    s.createdAt AS createdDate,
 
     COUNT(fb) AS likeCount,
 

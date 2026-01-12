@@ -2,6 +2,8 @@ package com.internbook.internbook_backend.dtos;
 
 import com.internbook.internbook_backend.enums.SubmissionType;
 
+import java.time.LocalDateTime;
+
 public interface SubmissionCardProjection {
     Integer getId();
     String getCompanyName();
@@ -11,6 +13,7 @@ public interface SubmissionCardProjection {
     Integer getUserYear();
     SubmissionType getSubmissionType();
     Integer getLikeCount();
+    LocalDateTime getCreatedDate();
 
     Boolean getHasCtc();
     Boolean getHasStipend();
