@@ -7,6 +7,7 @@ public record CursorPage<T>(
         List<T> items,
         boolean hasNext,
         Integer nextLikeCount,
-        LocalDateTime nextCreatedAt
+        LocalDateTime nextCreatedAt,
+        Integer nextId
 ) {
 }

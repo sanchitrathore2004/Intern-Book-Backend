@@ -152,26 +152,37 @@ LEFT JOIN s.ctcValue cv
 LEFT JOIN s.stipend st
 LEFT JOIN s.processStructure ps
 
-WHERE
-    (u.department.id = :departmentId
-     OR (:companyId IS NOT NULL AND c.id = :companyId))
-
 GROUP BY s.id, c.id, r.id, u.id
 
-HAVING
-    (:lastLikeCount IS NULL OR
-     COUNT(fb) < :lastLikeCount OR
-     (COUNT(fb) = :lastLikeCount AND MIN(s.createdAt) < :lastCreatedAt))
+HAVING (
+    :lastLikeCount IS NULL
+    OR COUNT(fb) < :lastLikeCount
+    OR (
+        COUNT(fb) = :lastLikeCount
+        AND (
+            s.createdAt < :lastCreatedAt
+            OR (
+                s.createdAt = :lastCreatedAt
+                AND s.id < :lastId
+            )
+        )
+    )
+)
 
-ORDER BY COUNT(fb) DESC, s.id ASC
+ORDER BY
+    COUNT(fb) DESC,
+    s.createdAt DESC,
+    s.id DESC
 """)
     List<SubmissionCardProjection> findTopSubmissionsCursor(
             @Param("departmentId") Integer departmentId,
             @Param("companyId") Integer companyId,
             @Param("lastLikeCount") Integer lastLikeCount,
             @Param("lastCreatedAt") LocalDateTime lastCreatedAt,
+            @Param("lastId") Integer lastId,
             Pageable pageable
     );
+
 
 
 

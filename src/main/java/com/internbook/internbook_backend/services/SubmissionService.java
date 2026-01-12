@@ -301,6 +301,7 @@ public class SubmissionService {
 
     public CursorPage<SubmissionCardResponseDto> getTopSubmission (Integer lastLikeCount,
                                                                    LocalDateTime lastCreatedAt,
+                                                                   Integer cursorId,
                                                                    int limit) {
         var user = authService.getCurrentUser();
         Integer companyId = user.getFavouriteCompany() != null
@@ -314,6 +315,7 @@ public class SubmissionService {
                         companyId,
                         lastLikeCount,
                         lastCreatedAt,
+                        cursorId,
                         pageable
                 );
 
@@ -331,8 +333,9 @@ public class SubmissionService {
 
         Integer nextLikeCount = hasNext ? rows.getLast().getLikeCount() : null;
         LocalDateTime nextCreatedAt = hasNext ? rows.getLast().getCreatedDate() : null;
+        Integer nextId = hasNext ? rows.getLast().getId() : null;
 
-        return new CursorPage<>(data, hasNext, nextLikeCount, nextCreatedAt);
+        return new CursorPage<>(data, hasNext, nextLikeCount, nextCreatedAt, nextId);
     }
 
     //  BULK UPLOAD ROUTES - DELETE BEFORE PUSHING TO PROD
