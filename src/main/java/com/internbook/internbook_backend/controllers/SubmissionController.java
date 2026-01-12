@@ -1,5 +1,6 @@
 package com.internbook.internbook_backend.controllers;
 
+import com.internbook.internbook_backend.common.pagination.CursorPage;
 import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.services.SubmissionService;
 import com.internbook.internbook_backend.services.TrieService;
@@ -10,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @RestController
@@ -74,8 +78,15 @@ public class SubmissionController {
     }
 
     @GetMapping("/top")
-    public ResponseEntity<List<SubmissionCardResponseDto>> getTopSubmissions() {
-        List<SubmissionCardResponseDto> response = submissionService.getTopSubmission();
+    public ResponseEntity<CursorPage<SubmissionCardResponseDto>> getTopSubmissions(
+            @RequestParam(required = false)  Integer cursorLike,
+            @RequestParam(required = false) Instant cursorCreatedAt,
+            @RequestParam(defaultValue = "10") Integer limit
+    ) {
+        LocalDateTime cursorLdt = cursorCreatedAt != null
+                ? LocalDateTime.ofInstant(cursorCreatedAt, ZoneId.systemDefault())
+                : null;
+        CursorPage<SubmissionCardResponseDto> response = submissionService.getTopSubmission(cursorLike, cursorLdt, limit);
         return ResponseEntity.ok(response);
     }
 
