@@ -81,12 +81,13 @@ public class SubmissionController {
     public ResponseEntity<CursorPage<SubmissionCardResponseDto>> getTopSubmissions(
             @RequestParam(required = false)  Integer cursorLike,
             @RequestParam(required = false) Instant cursorCreatedAt,
+            @RequestParam(required = false) Integer cursorId,
             @RequestParam(defaultValue = "10") Integer limit
     ) {
         LocalDateTime cursorLdt = cursorCreatedAt != null
                 ? LocalDateTime.ofInstant(cursorCreatedAt, ZoneId.systemDefault())
                 : null;
-        CursorPage<SubmissionCardResponseDto> response = submissionService.getTopSubmission(cursorLike, cursorLdt, limit);
+        CursorPage<SubmissionCardResponseDto> response = submissionService.getTopSubmission(cursorLike, cursorLdt, cursorId, limit);
         return ResponseEntity.ok(response);
     }
 
