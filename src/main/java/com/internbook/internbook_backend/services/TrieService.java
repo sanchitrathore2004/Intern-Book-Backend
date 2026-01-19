@@ -170,6 +170,31 @@ public class TrieService {
             ));
         }
 
+        // company + submission type
+        if(company != null && company.getName() != null && submission.getType() != null) {
+            phrases.add(normalize(company.getName() + " " + submission.getType()));
+        }
+
+        // submission type
+        if(submission.getType() != null) {
+            phrases.add(normalize(submission.getType().toString()));
+        }
+
+        // department
+        if(submission.getDepartment() != null) {
+            phrases.add(normalize(submission.getDepartment().getName()));
+        }
+
+        // department + type
+        if(submission.getType() != null &&  submission.getDepartment() != null) {
+            phrases.add(normalize(submission.getDepartment().getName() + " " + submission.getType()));
+        }
+
+        // department + company
+        if(company != null && submission.getDepartment() != null) {
+            phrases.add(normalize(company.getName() + " " + submission.getDepartment().getName()));
+        }
+
         // Author & department
         if (submission.getAuthorId() != null && !submission.getIsAnonymous()) {
             if (submission.getName() != null)
