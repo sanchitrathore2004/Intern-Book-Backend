@@ -21,7 +21,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.*;
@@ -333,9 +335,12 @@ public class SubmissionService {
 
         Integer nextLikeCount = hasNext ? rows.getLast().getLikeCount() : null;
         LocalDateTime nextCreatedAt = hasNext ? rows.getLast().getCreatedDate() : null;
+        Instant nextCreatedAtInstant = nextCreatedAt != null
+                ? nextCreatedAt.atZone(ZoneOffset.UTC).toInstant()
+                : null;
         Integer nextId = hasNext ? rows.getLast().getId() : null;
 
-        return new CursorPage<>(data, hasNext, nextLikeCount, nextCreatedAt, nextId);
+        return new CursorPage<>(data, hasNext, nextLikeCount, nextCreatedAtInstant, nextId);
     }
 
     //  BULK UPLOAD ROUTES - DELETE BEFORE PUSHING TO PROD
