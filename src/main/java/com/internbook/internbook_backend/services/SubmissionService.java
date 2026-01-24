@@ -273,6 +273,7 @@ public class SubmissionService {
         SubmissionCardResponseDto dto = new SubmissionCardResponseDto();
 
         dto.setId(p.getId());
+        dto.setCompanyId(p.getCompanyId());
         dto.setCompanyName(p.getCompanyName());
         dto.setCompanyLogoUrl(p.getCompanyLogoUrl());
         dto.setDomainName(p.getDomainName());

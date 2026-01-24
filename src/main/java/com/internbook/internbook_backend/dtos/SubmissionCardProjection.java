@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public interface SubmissionCardProjection {
     Integer getId();
+    Integer getCompanyId();
     String getCompanyName();
     String getCompanyLogoUrl();
     String getDomainName();

@@ -19,6 +19,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
@@ -59,6 +60,7 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
@@ -125,6 +127,7 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
@@ -189,6 +192,7 @@ ORDER BY
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
@@ -227,6 +231,7 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
