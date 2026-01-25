@@ -85,7 +85,7 @@ public class SubmissionController {
             @RequestParam(defaultValue = "10") Integer limit
     ) {
         LocalDateTime cursorLdt = cursorCreatedAt != null
-                ? LocalDateTime.ofInstant(cursorCreatedAt, ZoneId.systemDefault())
+                ? LocalDateTime.ofInstant(cursorCreatedAt, ZoneId.of("UTC"))
                 : null;
         CursorPage<SubmissionCardResponseDto> response = submissionService.getTopSubmission(cursorLike, cursorLdt, cursorId, limit);
         return ResponseEntity.ok(response);
