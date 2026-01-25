@@ -25,6 +25,7 @@ SELECT
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 
@@ -66,6 +67,7 @@ SELECT
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 
@@ -133,6 +135,7 @@ SELECT
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 
@@ -198,6 +201,7 @@ SELECT
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
 
     COUNT(fb) AS likeCount,
@@ -237,6 +241,7 @@ SELECT
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 

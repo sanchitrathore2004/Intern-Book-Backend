@@ -7,7 +7,6 @@ import com.internbook.internbook_backend.services.AuthService;
 import com.internbook.internbook_backend.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +49,17 @@ public class UserController {
             HttpServletResponse response
     ) {
         return authService.updateProfile(userService.updateProfile(request), response);
+    }
+
+    @PutMapping("/toggleAnonymous")
+    private ResponseEntity<Void> toggleAnonymous(){
+        userService.toggleAnonymousProfile();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getAnonymous")
+    private ResponseEntity<UserAnonymousResponseDto> getAnonymousProfile() {
+        return ResponseEntity.ok(userService.getAnonymousProfile());
     }
 
     @GetMapping("/me")

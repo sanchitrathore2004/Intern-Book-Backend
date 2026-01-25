@@ -20,7 +20,6 @@ public interface SubmissionCardProjection {
     Boolean getHasStipend();
     Boolean getHasProcessStructure();
     Boolean getHasExperience();
-    Boolean getHasMistakes();
-    Boolean getHasBenefits();
     Boolean getHasResources();
+    Boolean getAnonymous();
 }

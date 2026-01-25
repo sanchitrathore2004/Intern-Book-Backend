@@ -98,6 +98,20 @@ public class UserService {
                 .toList();
     }
 
+    public void toggleAnonymousProfile(){
+        var user = authService.getCurrentUser();
+        user.setAnonymous(!user.isAnonymous());
+         userRepository.save(user);
+    }
+
+    public UserAnonymousResponseDto getAnonymousProfile(){
+        var user = authService.getCurrentUser();
+        var userAnonymousProfileResponseDto = new UserAnonymousResponseDto();
+       userAnonymousProfileResponseDto.setIsAnonymous(user.isAnonymous());
+       return userAnonymousProfileResponseDto;
+    }
+
+
     public GetUserResponseDto getUser() {
         var user = authService.getCurrentUser();
 

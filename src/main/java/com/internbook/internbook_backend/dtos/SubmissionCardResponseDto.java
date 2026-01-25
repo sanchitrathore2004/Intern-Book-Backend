@@ -22,4 +22,5 @@ public class SubmissionCardResponseDto {
     private String companyLogoUrl;
     private boolean isFavourite;
     private Integer likeCount;
+    private boolean isAnonymous;
 }
