@@ -114,6 +114,24 @@ public class SubmissionService {
 
     public TrieSubmissionDto toTrieSubmissionDto(Submission sub) {
         var dto = new TrieSubmissionDto();
+        var user = sub.getUser();
+        dto.setIsAnonymous(user.isAnonymous());
+
+        if(!user.isAnonymous()){
+            dto.setAuthorId(user.getId());
+            dto.setName(user.getName());
+            dto.setEmail(user.getEmail());
+            dto.setProfileUrl(user.getProfileUrl());
+            dto.setYear(user.getYear());
+            dto.setDegree(user.getDegree());
+
+            if (user.getDepartment() != null) {
+                var deptDto = new DepartmentResponseDto();
+                deptDto.setId(user.getDepartment().getId());
+                deptDto.setName(user.getDepartment().getName());
+                dto.setDepartment(deptDto);
+            }
+        }
 
         dto.setId(sub.getId());
         dto.setCgpa(sub.getCgpa());
@@ -127,21 +145,6 @@ public class SubmissionService {
         dto.setLikeCount(sub.getLikeCount());
         dto.setDomainDescription(sub.getDomainDescription());
 
-        var user = sub.getUser();
-        dto.setAuthorId(user.getId());
-        dto.setName(user.getName());
-        dto.setEmail(user.getEmail());
-        dto.setProfileUrl(user.getProfileUrl());
-        dto.setYear(user.getYear());
-        dto.setDegree(user.getDegree());
-        dto.setIsAnonymous(user.isAnonymous());
-
-        if (user.getDepartment() != null) {
-            var deptDto = new DepartmentResponseDto();
-            deptDto.setId(user.getDepartment().getId());
-            deptDto.setName(user.getDepartment().getName());
-            dto.setDepartment(deptDto);
-        }
 
         if ((sub.getType() == SubmissionType.PLACED || sub.getType() == SubmissionType.INTERN_TO_PPO)
                 && sub.getCtcValue() != null) {
@@ -273,6 +276,7 @@ public class SubmissionService {
         SubmissionCardResponseDto dto = new SubmissionCardResponseDto();
 
         dto.setId(p.getId());
+        dto.setCompanyId(p.getCompanyId());
         dto.setCompanyName(p.getCompanyName());
         dto.setCompanyLogoUrl(p.getCompanyLogoUrl());
         dto.setDomainName(p.getDomainName());
@@ -281,6 +285,7 @@ public class SubmissionService {
         dto.setSubmissionType(p.getSubmissionType());
         dto.setLikeCount(p.getLikeCount());
         dto.setFavourite(favouriteIds.contains(p.getId()));
+        dto.setAnonymous(Boolean.TRUE.equals(p.getAnonymous()));
 
         dto.setTags(buildTags(p));
 
@@ -294,8 +299,6 @@ public class SubmissionService {
         if (p.getHasStipend()) tags.add("Stipend");
         if (p.getHasProcessStructure()) tags.add("Schedule");
         if (p.getHasExperience()) tags.add("Experience");
-        if (p.getHasMistakes()) tags.add("Mistakes");
-        if (p.getHasBenefits()) tags.add("Benefits");
         if (p.getHasResources()) tags.add("Resources");
 
         return tags;

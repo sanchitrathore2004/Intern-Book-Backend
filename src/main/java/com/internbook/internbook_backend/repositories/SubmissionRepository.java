@@ -19,11 +19,13 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 
@@ -59,11 +61,13 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 
@@ -125,11 +129,13 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 
@@ -189,11 +195,13 @@ ORDER BY
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
 
     COUNT(fb) AS likeCount,
@@ -227,11 +235,13 @@ GROUP BY s.id, c.id, r.id, u.id
     @Query("""
 SELECT
     s.id AS id,
+    c.id as companyId,
     c.name AS companyName,
     c.logoUrl AS companyLogoUrl,
     r.name AS domainName,
     u.name AS userName,
     u.year AS userYear,
+    u.isAnonymous as anonymous,
     s.type AS submissionType,
     s.createdAt AS createdDate,
 

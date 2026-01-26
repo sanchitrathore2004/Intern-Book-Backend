@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public interface SubmissionCardProjection {
     Integer getId();
+    Integer getCompanyId();
     String getCompanyName();
     String getCompanyLogoUrl();
     String getDomainName();
@@ -19,7 +20,6 @@ public interface SubmissionCardProjection {
     Boolean getHasStipend();
     Boolean getHasProcessStructure();
     Boolean getHasExperience();
-    Boolean getHasMistakes();
-    Boolean getHasBenefits();
     Boolean getHasResources();
+    Boolean getAnonymous();
 }

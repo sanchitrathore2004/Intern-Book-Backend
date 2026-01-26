@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class SubmissionCardResponseDto {
     private Integer id;
+    private Integer companyId;
     private String companyName;
     private String userName;
     private SubmissionType submissionType;
@@ -21,4 +22,5 @@ public class SubmissionCardResponseDto {
     private String companyLogoUrl;
     private boolean isFavourite;
     private Integer likeCount;
+    private boolean isAnonymous;
 }
