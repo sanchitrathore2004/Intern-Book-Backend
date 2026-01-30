@@ -44,7 +44,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
         s.id,
         c.id,
         c.name,
-        su.name
+        su.name,
+        su.isAnonymous
     )
     from User u
     join u.favouriteSubmissions s
