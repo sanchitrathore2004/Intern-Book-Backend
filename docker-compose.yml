@@ -9,6 +9,9 @@ services:
       - "8080:8080"
     depends_on:
       - mysql
+    networks:
+      - intern-book-network
+      - back-net
 
   mysql:
     container_name: "Intern-Book-DB"
@@ -20,6 +23,18 @@ services:
       - dbdata:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - back-net
 volumes:
   dbdata:
+
+networks:
+  intern-book-network:
+    external: true
+    name: intern-book-network
+
+  back-net:
+      driver: bridge
+      internal: true
+
 
