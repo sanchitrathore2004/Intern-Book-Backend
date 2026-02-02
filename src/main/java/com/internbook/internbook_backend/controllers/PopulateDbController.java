@@ -26,6 +26,7 @@ public class PopulateDbController {
             @RequestBody ArrayList<SaveUserRequestDto> request
     ) {
         request.forEach(submissionService::saveUsers);
+        // force push ki mkc
         return ResponseEntity.status(HttpStatus.CREATED).body("Users saved successfully");
     }
     @PostMapping("/roles")
