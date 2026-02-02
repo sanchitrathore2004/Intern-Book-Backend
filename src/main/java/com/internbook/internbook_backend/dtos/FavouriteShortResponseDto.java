@@ -9,10 +9,13 @@ public class FavouriteShortResponseDto {
     private String companyName;
     private String authorName;
 
-    public FavouriteShortResponseDto(Integer submissionId, Integer companyId, String companyName, String authorName) {
+    public FavouriteShortResponseDto(Integer submissionId, Integer companyId, String companyName, String authorName, Boolean isAnonymous) {
         this.submissionId = submissionId;
         this.companyId = companyId;
         this.companyName = companyName;
-        this.authorName = authorName;
+        if(isAnonymous){
+            this.authorName = "Anonymous";
+        }
+        else this.authorName = authorName;
     }
 }

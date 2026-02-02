@@ -212,7 +212,6 @@ public class SubmissionService {
         }
         submission.updateStipend(request.getStipendValue());
         submission.updateCtc(request.getCtc(), request.getBasePay());
-
         submissionRepository.save(submission);
         return toSubmissionResponseDto(submission);
     }
