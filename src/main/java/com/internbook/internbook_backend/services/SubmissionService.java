@@ -189,6 +189,7 @@ public class SubmissionService {
     ) {
 
         Submission submission = validateUserSubmission(submissionId);
+        var trieSubmissionDto = toTrieSubmissionDto(submission);
 
         submission.setExperience(request.getExperience());
         submission.setResources(request.getResources());
@@ -213,6 +214,13 @@ public class SubmissionService {
         submission.updateStipend(request.getStipendValue());
         submission.updateCtc(request.getCtc(), request.getBasePay());
         submissionRepository.save(submission);
+
+        eventPublisher.publishEvent(
+                new SubmissionCreatedEvent(submission.getId())
+        );
+        eventPublisher.publishEvent(
+                new SubmissionDeletedEvent(trieSubmissionDto)
+        );
         return toSubmissionResponseDto(submission);
     }
 
