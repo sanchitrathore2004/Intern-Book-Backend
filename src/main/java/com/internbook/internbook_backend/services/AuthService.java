@@ -76,6 +76,13 @@ public class AuthService {
         return ResponseEntity.ok(new RefreshTokenResponseDto(accessToken));
     }
 
+    public ResponseEntity<?> validate (String token) {
+        if(!jwtService.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     private DauthTokenResponseDto getDauthToken (String code) {
         RestTemplate restTemplate = new RestTemplate();
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();

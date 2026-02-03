@@ -28,10 +28,15 @@ public class AuthController {
         return authService.dauthLogin(request.getAuthorizationCode(), response);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<RefreshTokenResponseDto> refresh (@CookieValue(value = "refreshToken") String refreshToken)
+    @PostMapping("/validate")
+    public ResponseEntity<?> validateToken (@RequestBody ValidateTokenRequestDto request)
     {
-        return  authService.refresh(refreshToken);
+        return authService.validate(request.getToken());
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponseDto> refreshToken (@CookieValue(name = "refreshToken") String refreshToken) {
+        return authService.refresh(refreshToken);
     }
 
     @ExceptionHandler(DauthTokenNotRetrievedException.class)
