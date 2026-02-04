@@ -45,6 +45,7 @@ public class SubmissionService {
 
     private final ApplicationEventPublisher eventPublisher;
     private final DomainRepository domainRepository;
+    private final ProcessStructureRepository processStructureRepository;
 
     @Transactional
     public SubmissionResponseDto saveSubmission(SaveSubmissionRequestDto request) {
@@ -73,9 +74,9 @@ public class SubmissionService {
             submission.setCtcValue(ctcValue);
         }
 
-        if (!(request.getPiRounds() == null ||
-                request.getOtRounds() == null ||
-                request.getStartDate() == null ||
+        if (!(request.getPiRounds() == null &&
+                request.getOtRounds() == null &&
+                request.getStartDate() == null &&
                 request.getEndDate() == null)) {
 
             var processStructureData = processStructureMapper.toDto(request);
@@ -187,7 +188,6 @@ public class SubmissionService {
             Integer submissionId,
             SaveSubmissionRequestDto request
     ) {
-
         Submission submission = validateUserSubmission(submissionId);
         var trieSubmissionDto = toTrieSubmissionDto(submission);
 
@@ -213,6 +213,21 @@ public class SubmissionService {
         }
         submission.updateStipend(request.getStipendValue());
         submission.updateCtc(request.getCtc(), request.getBasePay());
+
+        submission.removeProcessStructure();
+
+        if (!(request.getPiRounds() == null &&
+                request.getOtRounds() == null &&
+                request.getStartDate() == null &&
+                request.getEndDate() == null)) {
+
+            ProcessStructure ps =
+                    new ProcessStructure(processStructureMapper.toDto(request));
+
+            ps.setSubmissions(submission);
+            submission.setProcessStructure(ps);
+        }
+
         submissionRepository.save(submission);
 
         eventPublisher.publishEvent(
@@ -413,5 +428,14 @@ public class SubmissionService {
         }
 
         submissionRepository.save(submission);
+    }
+
+    public ProcessStructureRequestDto toProcessStructureRequestDto(SaveSubmissionRequestDto request) {
+        ProcessStructureRequestDto requestDto = new ProcessStructureRequestDto();
+        requestDto.setStartDate(request.getStartDate());
+        requestDto.setEndDate(request.getEndDate());
+        requestDto.setOtRounds(request.getOtRounds());
+        requestDto.setPiRounds(request.getPiRounds());
+        return  requestDto;
     }
 }

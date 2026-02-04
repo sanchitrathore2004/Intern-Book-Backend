@@ -1,5 +1,6 @@
 package com.internbook.internbook_backend.entities;
 
+import com.internbook.internbook_backend.dtos.ProcessStructureRequestDto;
 import com.internbook.internbook_backend.enums.SubmissionType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -77,7 +78,7 @@ public class Submission {
     @ManyToMany(mappedBy = "favouriteSubmissions")
     private Set<User> favouriteBy = new LinkedHashSet<>();
 
-    @OneToOne(mappedBy = "submissions", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToOne(mappedBy = "submissions", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProcessStructure processStructure;
 
     @OneToMany(mappedBy = "submission")
@@ -141,4 +142,25 @@ public class Submission {
         }
         stipend=null;
     }
+
+    public void updateProcessStructure(ProcessStructureRequestDto dto) {
+        if (dto == null ||
+                dto.getOtRounds() == null ||
+                dto.getPiRounds() == null ||
+                dto.getStartDate() == null ||
+                dto.getEndDate() == null) {
+
+            this.processStructure = null;
+            return;
+        }
+
+        ProcessStructure ps = new ProcessStructure(dto);
+        ps.setSubmissions(this);
+        this.processStructure = ps;
+    }
+
+    public void removeProcessStructure() {
+        this.processStructure = null;
+    }
+
 }
