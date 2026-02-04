@@ -43,4 +43,9 @@ public class ProcessStructure {
         this.setStartDate(data.getStartDate());
         this.setEndDate(data.getEndDate());
     }
+
+    public void setSubmissions(Submission submission) {
+        this.submissions = submission;
+        this.id = submission != null ? submission.getId() : null;
+    }
 }
