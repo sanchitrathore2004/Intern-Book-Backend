@@ -36,7 +36,7 @@ public class User {
     @Column(name = "year")
     private Integer year;
 
-    @Column(name = "profile_url", insertable = false)
+    @Column(name = "profile_url")
     private String profileUrl;
 
     @Column(name = "created_at", insertable = false, updatable = false)
