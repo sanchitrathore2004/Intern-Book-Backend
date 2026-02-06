@@ -136,6 +136,7 @@ public class AuthService {
         user.setDepartment(getDepartmentByEmail(dauthUserApiResponseDto.getEmail()));
         user.setUserRole(UserRole.USER);
         user.setAnonymous(false);
+        user.setProfileUrl("https://robohash.org/"+getRollNumberFromEmail(dauthUserApiResponseDto.getEmail()));
         return user;
     }
 
