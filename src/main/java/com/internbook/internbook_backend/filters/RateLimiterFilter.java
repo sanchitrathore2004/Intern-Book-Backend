@@ -24,7 +24,7 @@ public class RateLimiterFilter extends HttpFilter {
                              HttpServletResponse response,
                              FilterChain chain) throws IOException, ServletException {
 
-        String clientIp = getClientIp(request);
+        String clientIp = request.getRemoteAddr();
         TokenBucketService ipBucket = ipBuckets.get(clientIp, k->new TokenBucketService(
                 rateLimiterProperties.getPerIpCapacity(),
                 rateLimiterProperties.getPerIpRefillRate()
@@ -43,13 +43,5 @@ public class RateLimiterFilter extends HttpFilter {
         }
 
         chain.doFilter(request, response);
-    }
-
-    private String getClientIp (HttpServletRequest request) {
-        String xfHeader = request.getHeader("x-forwarded-for");
-        if (xfHeader != null) {
-            return xfHeader.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
     }
 }
