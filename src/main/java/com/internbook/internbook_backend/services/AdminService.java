@@ -4,6 +4,7 @@ import com.internbook.internbook_backend.dtos.AdminAddCompanyRequestDto;
 import com.internbook.internbook_backend.dtos.GetAllRequestResponseDto;
 import com.internbook.internbook_backend.entities.Company;
 import com.internbook.internbook_backend.enums.UserRole;
+import com.internbook.internbook_backend.projections.GetAllRequestProjection;
 import com.internbook.internbook_backend.repositories.CompanyRepository;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRequestRepository;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -74,6 +76,14 @@ public class AdminService {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    public GetAllRequestResponseDto toDto(GetAllRequestProjection projection) {
+        var dto = new GetAllRequestResponseDto();
+        dto.setId(projection.id());
+        dto.setUserId(projection.userId());
+        dto.setCompanyName(projection.companyName());
+        return dto;
+    }
+
     public ResponseEntity<List<GetAllRequestResponseDto>> getAllRequests() {
         var user = authService.getCurrentUser();
         if(user == null) {
@@ -82,7 +92,14 @@ public class AdminService {
         if(!user.getUserRole().equals(UserRole.ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        var requests = userRequestRepository.findAllRequests();
-        return ResponseEntity.ok().body(requests);
+        var projections = userRequestRepository.findAllRequests();
+
+        List<GetAllRequestResponseDto> response = new ArrayList<>();
+        projections.forEach(projection -> {
+            var dto = toDto(projection);
+            response.add(dto);
+        });
+
+        return ResponseEntity.ok().body(response);
     }
 }
