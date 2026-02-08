@@ -43,7 +43,9 @@ public class AdminService {
         company.setLogoUrl(adminAddCompanyRequestDto.getLogoUrl());
         company.setDescription(adminAddCompanyRequestDto.getDescription());
         companyRepository.save(company);
-        return  ResponseEntity.status(HttpStatus.CREATED).body("Company saved successfully");
+        return ResponseEntity.ok(java.util.Map.of(
+                "message", "Company saved successfully"
+        ));
     }
 
     public ResponseEntity<?> deleteSubmission (Integer submissionId) {
@@ -78,9 +80,10 @@ public class AdminService {
 
     public GetAllRequestResponseDto toDto(GetAllRequestProjection projection) {
         var dto = new GetAllRequestResponseDto();
-        dto.setId(projection.id());
-        dto.setUserId(projection.userId());
-        dto.setCompanyName(projection.companyName());
+        dto.setId(projection.getId());
+        dto.setUserId(projection.getUserId());
+        dto.setCompanyName(projection.getCompanyName());
+        dto.setUserName(projection.getUserName());
         return dto;
     }
 

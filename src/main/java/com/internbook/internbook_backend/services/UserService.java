@@ -175,7 +175,10 @@ public class UserService {
         userRequest.setUser(user);
         userRequest.setCompanyName(request.getCompanyName());
         userRequestRepository.save(userRequest);
-        return ResponseEntity.ok(userRequest);
+        return ResponseEntity.ok(java.util.Map.of(
+                "message", "Company request submitted successfully",
+                "companyName", request.getCompanyName()
+        ));
     }
 
     private Boolean isRoboHashUrl (String profileUrl) {
