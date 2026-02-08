@@ -368,68 +368,6 @@ public class SubmissionService {
         return new CursorPage<>(data, hasNext, nextLikeCount, nextCreatedAtInstant, nextId);
     }
 
-    //  BULK UPLOAD ROUTES - DELETE BEFORE PUSHING TO PROD
-    public void saveDepartment(SaveDepartmentRequestDto request) {
-        var department = new Department();
-        department.setName(request.getDepartName());
-
-        departmentRepository.save(department);
-    }
-
-    public void saveUsers(SaveUserRequestDto request) {
-        var user = new User();
-        user.setId(request.getRollNo());
-        user.setName(request.getName());
-        user.setDegree(request.getDegree());
-        user.setEmail(request.getEmail());
-        var department = departmentRepository.findById(request.getDepartment_id()).orElse(null);
-        if(department == null)
-            throw new UsernameNotFoundException("Department not found");
-        user.setDepartment(department);
-        user.setYear(request.getYear());
-
-        userRepository.save(user);
-    }
-
-    public void saveSubmissions(SaveSubmissionsRequestDto request) {
-        var user = userRepository.findById(request.getUserId()).orElse(null);
-        var domain = domainRepository.getReferenceById(request.getDomainId());
-        var company = companyRepository.getReferenceById(request.getCompanyId());
-
-        var submission = submissionMapper.toEntity(request);
-        submission.setUser(user);
-        submission.setDomain(domain);
-        submission.setCompany(company);
-
-        if(request.getStipendValue() != null) {
-            var stipend = new Stipend(user, company, request.getStipendValue(), submission);
-            submission.setStipend(stipend);
-        }
-
-        if(request.getCtc() != null) {
-            var ctcValue = new CtcValue(user, company, request.getCtc(), submission);
-            if(request.getBasePay() != null)
-                ctcValue.setBasePay(request.getBasePay());
-
-            submission.setCtcValue(ctcValue);
-        }
-
-        if(!(
-                request.getPiRounds() == null ||
-                        request.getOtRounds() == null ||
-                        request.getStartDate() == null ||
-                        request.getEndDate() == null
-        )) {
-            var processStructureData = processStructureMapper.toDto(request);
-            var processStructure = new ProcessStructure(processStructureData);
-            processStructure.setSubmissions(submission);
-
-            submission.setProcessStructure(processStructure);
-        }
-
-        submissionRepository.save(submission);
-    }
-
     public ProcessStructureRequestDto toProcessStructureRequestDto(SaveSubmissionRequestDto request) {
         ProcessStructureRequestDto requestDto = new ProcessStructureRequestDto();
         requestDto.setStartDate(request.getStartDate());

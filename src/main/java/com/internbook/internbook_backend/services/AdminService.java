@@ -2,13 +2,17 @@ package com.internbook.internbook_backend.services;
 
 import com.internbook.internbook_backend.dtos.AdminAddCompanyRequestDto;
 import com.internbook.internbook_backend.entities.Company;
+import com.internbook.internbook_backend.entities.UserRequest;
 import com.internbook.internbook_backend.enums.UserRole;
 import com.internbook.internbook_backend.repositories.CompanyRepository;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
+import com.internbook.internbook_backend.repositories.UserRequestRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -16,6 +20,7 @@ public class AdminService {
     private final AuthService authService;
     private final CompanyRepository companyRepository;
     private final SubmissionRepository submissionRepository;
+    private final UserRequestRepository userRequestRepository;
 
     public ResponseEntity<?> addCompany (AdminAddCompanyRequestDto adminAddCompanyRequestDto) {
         var user = authService.getCurrentUser();
@@ -52,5 +57,17 @@ public class AdminService {
         }
         submissionRepository.deleteById(submissionId);
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    public ResponseEntity<List<UserRequest>> getAllRequests() {
+        var user = authService.getCurrentUser();
+        if(user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if(!user.getUserRole().equals(UserRole.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        var requests = userRequestRepository.findAll();
+        return ResponseEntity.ok().body(requests);
     }
 }

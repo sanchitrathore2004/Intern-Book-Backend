@@ -78,6 +78,13 @@ public class UserController {
         return userService.removeDp();
     }
 
+    @PostMapping("/addCompany")
+    public ResponseEntity<?> addCompanyRequest(
+            @Valid @RequestBody AddCompanyRequestDto request
+    ) {
+        return userService.addCompanyRequest(request);
+    }
+
     @ExceptionHandler(ProfilePictureUploadException.class)
     public ResponseEntity<Map<String, String>> handleProfilePictureUploadException() {
         return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(
