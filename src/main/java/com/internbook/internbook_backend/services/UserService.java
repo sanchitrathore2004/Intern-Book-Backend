@@ -1,5 +1,6 @@
 package com.internbook.internbook_backend.services;
 
+import com.cloudinary.Cloudinary;
 import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.User;
 import com.internbook.internbook_backend.exceptions.ProfilePictureUploadException;
@@ -8,6 +9,7 @@ import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class UserService {
     private final SubmissionService submissionService;
     private final UserRepository userRepository;
     private final CompanyMapper companyMapper;
+    private final Cloudinary cloudinary;
+    private final CloudinaryService cloudinaryService;
 
     public UserProfileResponseDto getProfileById(Long userId) {
         var user = userRepository.findById(userId).orElse(null);
@@ -140,11 +144,32 @@ public class UserService {
     public void updateDp (String profileUrl) {
         try {
             var user = authService.getCurrentUser();
+            var previousProfileUrl = user.getProfileUrl();
+            Boolean isProfileSetToRoboHash = isRoboHashUrl(previousProfileUrl);
+            if(!isProfileSetToRoboHash){
+                cloudinaryService.deletePreviousDpUrl(previousProfileUrl);
+            }
             user.setProfileUrl(profileUrl);
             userRepository.save(user);
         } catch (Exception e) {
             throw new ProfilePictureUploadException();
         }
+    }
+
+    public ResponseEntity<DeleteProfileResponseDto> removeDp () {
+        var user =  authService.getCurrentUser();
+        var previousProfileUrl = user.getProfileUrl();
+        Boolean isProfileSetToRoboHash = isRoboHashUrl(previousProfileUrl);
+        if(!isProfileSetToRoboHash){
+            cloudinaryService.deletePreviousDpUrl(previousProfileUrl);
+            user.setProfileUrl("https://robohash.org/"+user.getId());
+            userRepository.save(user);
+        }
+        return ResponseEntity.ok(new DeleteProfileResponseDto(user.getProfileUrl()));
+    }
+
+    private Boolean isRoboHashUrl (String profileUrl) {
+        return profileUrl.startsWith("https://robohash.org/");
     }
 }
 

@@ -73,6 +73,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/delete/profile")
+    public ResponseEntity<DeleteProfileResponseDto>  deleteProfile() {
+        return userService.removeDp();
+    }
+
     @ExceptionHandler(ProfilePictureUploadException.class)
     public ResponseEntity<Map<String, String>> handleProfilePictureUploadException() {
         return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(

@@ -161,14 +161,14 @@ LEFT JOIN s.processStructure ps
 GROUP BY s.id, c.id, r.id, u.id
 
 HAVING (
-    :lastLikeCount IS NULL
-    OR COUNT(fb) < :lastLikeCount
+    :lastCreatedAt IS NULL
+    OR s.createdAt < :lastCreatedAt
     OR (
-        COUNT(fb) = :lastLikeCount
+        s.createdAt = :lastCreatedAt
         AND (
-            s.createdAt < :lastCreatedAt
+            COUNT(fb) < :lastLikeCount
             OR (
-                s.createdAt = :lastCreatedAt
+                COUNT(fb) = :lastLikeCount
                 AND s.id < :lastId
             )
         )
@@ -176,10 +176,11 @@ HAVING (
 )
 
 ORDER BY
-    COUNT(fb) DESC,
     s.createdAt DESC,
+    COUNT(fb) DESC,
     s.id DESC
 """)
+
     List<SubmissionCardProjection> findTopSubmissionsCursor(
             @Param("departmentId") Integer departmentId,
             @Param("companyId") Integer companyId,
@@ -268,6 +269,8 @@ LEFT JOIN s.processStructure ps
 WHERE c.id = :companyId
 
 GROUP BY s.id, c.id, r.id, u.id
+
+ORDER BY s.likeCount DESC
 """)
     List<SubmissionCardProjection> findAllSubmissionsOfCompany(@Param("companyId") Integer companyId);
 
