@@ -1,12 +1,13 @@
 package com.internbook.internbook_backend.services;
 
-import com.cloudinary.Cloudinary;
 import com.internbook.internbook_backend.dtos.*;
 import com.internbook.internbook_backend.entities.User;
+import com.internbook.internbook_backend.entities.UserRequest;
 import com.internbook.internbook_backend.exceptions.ProfilePictureUploadException;
 import com.internbook.internbook_backend.mappers.CompanyMapper;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
 import com.internbook.internbook_backend.repositories.UserRepository;
+import com.internbook.internbook_backend.repositories.UserRequestRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class UserService {
     private final SubmissionService submissionService;
     private final UserRepository userRepository;
     private final CompanyMapper companyMapper;
-    private final Cloudinary cloudinary;
     private final CloudinaryService cloudinaryService;
+    private final UserRequestRepository userRequestRepository;
 
     public UserProfileResponseDto getProfileById(Long userId) {
         var user = userRepository.findById(userId).orElse(null);
@@ -166,6 +167,15 @@ public class UserService {
             userRepository.save(user);
         }
         return ResponseEntity.ok(new DeleteProfileResponseDto(user.getProfileUrl()));
+    }
+
+    public ResponseEntity<?> addCompanyRequest(AddCompanyRequestDto request) {
+        var user = authService.getCurrentUser();
+        var userRequest = new UserRequest();
+        userRequest.setUser(user);
+        userRequest.setCompanyName(request.getCompanyName());
+        userRequestRepository.save(userRequest);
+        return ResponseEntity.ok(userRequest);
     }
 
     private Boolean isRoboHashUrl (String profileUrl) {
