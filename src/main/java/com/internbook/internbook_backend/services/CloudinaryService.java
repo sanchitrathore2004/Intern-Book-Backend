@@ -35,4 +35,21 @@ public class CloudinaryService {
             throw new CloudinarySignatureException();
         }
     }
+
+    public void deletePreviousDpUrl(String profileUrl) {
+        try {
+            String publicId = extractPublicId(profileUrl);
+            cloudinary.uploader().destroy(publicId, Map.of());
+        } catch (Exception e) {
+            throw new CloudinarySignatureException();
+        }
+    }
+
+    private String extractPublicId(String url) {
+        String[] parts = url.split("/upload/");
+        String path = parts[1];
+        path = path.replaceAll("v\\d+/", "");
+        return path.substring(0, path.lastIndexOf("."));
+    }
+
 }
