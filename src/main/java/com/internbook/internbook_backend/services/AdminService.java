@@ -1,8 +1,8 @@
 package com.internbook.internbook_backend.services;
 
 import com.internbook.internbook_backend.dtos.AdminAddCompanyRequestDto;
+import com.internbook.internbook_backend.dtos.GetAllRequestResponseDto;
 import com.internbook.internbook_backend.entities.Company;
-import com.internbook.internbook_backend.entities.UserRequest;
 import com.internbook.internbook_backend.enums.UserRole;
 import com.internbook.internbook_backend.repositories.CompanyRepository;
 import com.internbook.internbook_backend.repositories.SubmissionRepository;
@@ -59,7 +59,7 @@ public class AdminService {
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    public ResponseEntity<List<UserRequest>> getAllRequests() {
+    public ResponseEntity<?>deleteRequest(Integer requestId) {
         var user = authService.getCurrentUser();
         if(user == null) {
             return ResponseEntity.notFound().build();
@@ -67,7 +67,22 @@ public class AdminService {
         if(!user.getUserRole().equals(UserRole.ADMIN)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        var requests = userRequestRepository.findAll();
+        if(requestId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        userRequestRepository.deleteById(requestId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    public ResponseEntity<List<GetAllRequestResponseDto>> getAllRequests() {
+        var user = authService.getCurrentUser();
+        if(user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if(!user.getUserRole().equals(UserRole.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        var requests = userRequestRepository.findAllRequests();
         return ResponseEntity.ok().body(requests);
     }
 }
