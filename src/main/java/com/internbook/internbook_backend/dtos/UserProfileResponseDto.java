@@ -28,4 +28,14 @@ public class UserProfileResponseDto {
         this.profileUrl = user.getProfileUrl();
         this.year = user.getYear();
     }
+
+    public UserProfileResponseDto() {
+        this.id = null;
+        this.name = "Anonymous";
+        this.email = null;
+        this.degree = null;
+        this.department = null;
+        this.profileUrl = "https://robohash.org/anonymous";
+        this.year = null;
+    }
 }
