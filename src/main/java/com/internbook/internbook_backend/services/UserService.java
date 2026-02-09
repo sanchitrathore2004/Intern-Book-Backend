@@ -34,6 +34,12 @@ public class UserService {
         if(user == null)
             throw new UsernameNotFoundException("User not found");
 
+        var currentUser = authService.getCurrentUser();
+
+        if(user.isAnonymous() && !user.getId().equals(currentUser.getId())) {
+            return new UserProfileResponseDto();
+        }
+
         var rows = submissionRepository.findAllByUserId(user.getId());
 
         Set<Integer> favouriteIds =
