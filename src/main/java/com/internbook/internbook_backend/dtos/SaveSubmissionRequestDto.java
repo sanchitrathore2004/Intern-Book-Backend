@@ -24,7 +24,7 @@ public class SaveSubmissionRequestDto {
     private String domainDescription;
 
     @NotBlank(message = "Experience cannot be empty")
-    @Size(min = 50, max = 20000, message = "Experience should be between 50 and 20,000 characters")
+    @Size(min = 50, max= 100000, message = "Experience should be between 50 and 20,000 characters")
     private String experience;
 
     @Size(max = 2000)
