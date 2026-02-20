@@ -301,6 +301,7 @@ public class SubmissionService {
         dto.setCompanyId(p.getCompanyId());
         dto.setCompanyName(p.getCompanyName());
         dto.setCompanyLogoUrl(p.getCompanyLogoUrl());
+        dto.setUserId(p.getUserId());
         dto.setDomainName(p.getDomainName());
         dto.setUserName(p.getUserName());
         dto.setYear(p.getUserYear());
