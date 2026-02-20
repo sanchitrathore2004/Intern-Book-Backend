@@ -15,6 +15,7 @@ public class SubmissionCardResponseDto {
     private Integer companyId;
     private String companyName;
     private String userName;
+    private Long userId;
     private SubmissionType submissionType;
     private String domainName;
     private Integer year;
