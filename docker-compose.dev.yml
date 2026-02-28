@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  backend:
+    build: .
+    env_file:
+      - ./.env
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    networks:
+      - intern-book-network
+
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - ./.env
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - intern-book-network
+
+volumes:
+  dbdata:
+
+networks:
+  intern-book-network:
+    driver: bridge
