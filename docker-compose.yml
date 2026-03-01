@@ -22,6 +22,18 @@ services:
       - "3306:3306"
     networks:
       - intern-book-network
+
+  mysql-admin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    networks:
+      - intern-book-network
 volumes:
   dbdata:
 
